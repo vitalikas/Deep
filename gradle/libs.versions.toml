@@ -2,6 +2,7 @@
 # Build tools
 agp = "8.11.2"
 androidTools = "31.12.0"
+androidDesugarJdkLibs = "2.1.5"
 kotlin = "2.3.0"
 
 android-compileSdk = "36"
@@ -58,10 +59,16 @@ android-tools-common = { group = "com.android.tools", name = "common", version.r
 compose-gradlePlugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
+android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
+
 [plugins]
 # Android
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+
+# Custom convention plugins
+# Called via apply("plugin-id") in AndroidApplicationComposeConventionPlugin convention plugin
+convention-android-application = { id = "lt.vitalijus.convention.android.application", version = "unspecified" }
 
 # Kotlin
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
