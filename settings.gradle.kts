@@ -29,3 +29,13 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+include(":core:presentation")
+include(":core:domain")
+include(":core:data")
+include(":core:designsystem")
+include(":feature:auth:presentation")
+include(":feature:auth:domain")
+include(":feature:scan:presentation")
+include(":feature:scan:domain")
+include(":feature:scan:data")
+include(":feature:scan:database")
