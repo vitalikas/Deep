@@ -4,6 +4,7 @@ agp = "8.11.2"
 androidTools = "31.12.0"
 androidDesugarJdkLibs = "2.1.5"
 kotlin = "2.3.0"
+composeBom = "2025.07.00"
 
 android-compileSdk = "36"
 android-minSdk = "24"
@@ -61,6 +62,11 @@ kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", ve
 
 android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", version.ref = "androidDesugarJdkLibs" }
 
+# Compose
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+
 [plugins]
 # Android
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -69,6 +75,8 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 # Custom convention plugins
 # Called via apply("plugin-id") in AndroidApplicationComposeConventionPlugin convention plugin
 convention-android-application = { id = "lt.vitalijus.convention.android.application", version = "unspecified" }
+# Called via apply("plugin-id") in CmpApplicationConventionPlugin convention plugin
+convention-android-application-compose = { id = "lt.vitalijus.convention.android.application.compose", version = "unspecified" }
 
 # Kotlin
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
