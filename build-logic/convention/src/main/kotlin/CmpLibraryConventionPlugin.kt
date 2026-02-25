@@ -14,12 +14,12 @@ class CmpLibraryConventionPlugin : Plugin<Project> {
             }
 
             dependencies {
-                "commonMainImplementation"(libs.findLibrary("jetbrains-compose-foundation").get())
-                "commonMainImplementation"(libs.findLibrary("jetbrains-compose-material3").get())
-                "commonMainImplementation"(libs.findLibrary("jetbrains-compose-ui").get())
-                "commonMainImplementation"(libs.findLibrary("jetbrains-compose-material-icons-core").get())
+                "commonMainImplementation"(libs.findLibrary("cmp-foundation").get())
+                "commonMainImplementation"(libs.findLibrary("cmp-material3").get())
+                "commonMainImplementation"(libs.findLibrary("cmp-ui").get())
+                "commonMainImplementation"(libs.findLibrary("cmp-material-icons-core").get())
 
-                "debugImplementation"(libs.findLibrary("jetbrains-compose-ui-tooling").get())
+                "debugImplementation"(libs.findLibrary("cmp-ui-tooling").get())
             }
         }
     }

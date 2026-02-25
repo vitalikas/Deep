@@ -5,7 +5,7 @@ plugins {
 kotlin {
     sourceSets {
         androidMain.dependencies {
-            implementation(libs.compose.uiToolingPreview)
+            implementation(libs.cmp.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
         }
         commonMain.dependencies {
@@ -22,13 +22,13 @@ kotlin {
             implementation(projects.feature.scan.database)
             implementation(projects.feature.scan.presentation)
 
-            implementation(libs.compose.runtime)
-            implementation(libs.compose.foundation)
-            implementation(libs.compose.material3)
-            implementation(libs.compose.ui)
-            implementation(libs.compose.components.resources)
-            implementation(libs.androidx.lifecycle.viewmodelCompose)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
+            implementation(libs.cmp.runtime)
+            implementation(libs.cmp.foundation)
+            implementation(libs.cmp.material3)
+            implementation(libs.cmp.ui)
+            implementation(libs.cmp.components.resources)
+            implementation(libs.jetbrains.lifecycle.viewmodel.compose)
+            implementation(libs.jetbrains.lifecycle.runtime.compose)
         }
     }
 }

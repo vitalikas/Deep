@@ -25,16 +25,16 @@ class CmpFeatureConventionPlugin : Plugin<Project> {
                 "androidMainImplementation"(libs.findLibrary("koin-androidx-navigation").get())
                 "androidMainImplementation"(libs.findLibrary("koin-core-viewmodel").get())
 
-                "commonMainImplementation"(libs.findLibrary("jetbrains-compose-runtime").get())
-                "commonMainImplementation"(libs.findLibrary("jetbrains-compose-viewmodel").get())
+                "commonMainImplementation"(libs.findLibrary("cmp-runtime").get())
+                "commonMainImplementation"(libs.findLibrary("jetbrains-lifecycle-viewmodel-compose").get())
                 "commonMainImplementation"(libs.findLibrary("jetbrains-lifecycle-viewmodel").get())
-                "commonMainImplementation"(libs.findLibrary("jetbrains-lifecycle-compose").get())
+                "commonMainImplementation"(libs.findLibrary("jetbrains-lifecycle-runtime-compose").get())
                 "commonMainImplementation"(
                     libs.findLibrary("jetbrains-lifecycle-viewmodel-savedstate").get()
                 )
                 "commonMainImplementation"(libs.findLibrary("jetbrains-savedstate").get())
                 "commonMainImplementation"(libs.findLibrary("jetbrains-bundle").get())
-                "commonMainImplementation"(libs.findLibrary("jetbrains-compose-navigation").get())
+                "commonMainImplementation"(libs.findLibrary("jetbrains-navigation-compose").get())
             }
         }
     }

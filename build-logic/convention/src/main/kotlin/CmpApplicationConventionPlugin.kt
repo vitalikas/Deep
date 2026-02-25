@@ -20,7 +20,7 @@ class CmpApplicationConventionPlugin : Plugin<Project> {
             configureIosTargetsApp()
 
             dependencies {
-                "debugImplementation"(libs.findLibrary("compose-uiTooling").get())
+                "debugImplementation"(libs.findLibrary("cmp-ui-tooling").get())
             }
         }
     }
