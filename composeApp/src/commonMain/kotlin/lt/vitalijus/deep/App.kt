@@ -19,11 +19,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import deep.composeapp.generated.resources.Res
 import deep.composeapp.generated.resources.compose_multiplatform
+import lt.vitalijus.core.designsystem.theme.DeepTheme
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun App() {
-    MaterialTheme {
+    DeepTheme {
         var showContent by remember { mutableStateOf(false) }
         Column(
             modifier = Modifier
