@@ -1,7 +1,16 @@
 package lt.vitalijus.core.data.networking
 
+import io.ktor.client.HttpClient
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.client.request.url
 import io.ktor.client.statement.HttpResponse
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.Result
@@ -48,5 +57,85 @@ fun constructRoute(route: String): String {
         route.contains(UrlConstants.BASE_URL) -> route
         route.startsWith("/") -> "${UrlConstants.BASE_URL}$route"
         else -> "${UrlConstants.BASE_URL}/$route"
+    }
+}
+
+suspend inline fun <reified Request, reified Response : Any> HttpClient.post(
+    route: String,
+    queryParams: Map<String, Any> = mapOf(),
+    body: Request,
+    crossinline builder: HttpRequestBuilder.() -> Unit = {}
+): Result<Response, DataError.Remote> {
+    return safeCall {
+        post {
+            url(urlString = constructRoute(route = route))
+            queryParams.forEach { (key, value) ->
+                parameter(
+                    key = key,
+                    value = value
+                )
+            }
+            setBody(body = body)
+            builder()
+        }
+    }
+}
+
+suspend inline fun <reified Response : Any> HttpClient.get(
+    route: String,
+    queryParams: Map<String, Any> = mapOf(),
+    crossinline builder: HttpRequestBuilder.() -> Unit = {}
+): Result<Response, DataError.Remote> {
+    return safeCall {
+        get {
+            url(urlString = constructRoute(route = route))
+            queryParams.forEach { (key, value) ->
+                parameter(
+                    key = key,
+                    value = value
+                )
+            }
+            builder()
+        }
+    }
+}
+
+suspend inline fun <reified Response : Any> HttpClient.delete(
+    route: String,
+    queryParams: Map<String, Any> = mapOf(),
+    crossinline builder: HttpRequestBuilder.() -> Unit = {}
+): Result<Response, DataError.Remote> {
+    return safeCall {
+        delete {
+            url(urlString = constructRoute(route = route))
+            queryParams.forEach { (key, value) ->
+                parameter(
+                    key = key,
+                    value = value
+                )
+            }
+            builder()
+        }
+    }
+}
+
+suspend inline fun <reified Request, reified Response : Any> HttpClient.put(
+    route: String,
+    queryParams: Map<String, Any> = mapOf(),
+    body: Request,
+    crossinline builder: HttpRequestBuilder.() -> Unit = {}
+): Result<Response, DataError.Remote> {
+    return safeCall {
+        put {
+            url(urlString = constructRoute(route = route))
+            queryParams.forEach { (key, value) ->
+                parameter(
+                    key = key,
+                    value = value
+                )
+            }
+            setBody(body = body)
+            builder()
+        }
     }
 }
