@@ -1,37 +1,36 @@
 plugins {
     alias(libs.plugins.convention.kmp.library)
+    alias(libs.plugins.convention.room)
     alias(libs.plugins.convention.buildkonfig)
 }
 
 kotlin {
-    // Source set declarations.
-    // Declaring a target automatically creates a source set with the same name. By default, the
-    // Kotlin Gradle Plugin creates additional source sets that depend on each other, since it is
-    // common to share sources between related targets.
-    // See: https://kotlinlang.org/docs/multiplatform-hierarchy.html
     sourceSets {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
 
                 implementation(projects.core.domain)
+                implementation(projects.core.data)
+                implementation(projects.feature.auth.domain)
 
+                implementation(libs.bundles.koin.common)
                 implementation(libs.bundles.ktor.common)
                 implementation(libs.touchlab.kermit)
+                implementation(libs.kotlinx.datetime)
             }
         }
 
         androidMain {
             dependencies {
-                implementation(libs.ktor.client.okhttp)
                 implementation(libs.koin.android)
+                implementation(libs.ktor.client.okhttp)
             }
         }
 
         iosMain {
             dependencies {
                 implementation(libs.ktor.client.darwin)
-                implementation(libs.koin.core)
             }
         }
     }

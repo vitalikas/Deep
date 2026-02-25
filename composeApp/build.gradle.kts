@@ -7,6 +7,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.cmp.ui.tooling.preview)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             implementation(projects.core.data)
@@ -14,6 +15,7 @@ kotlin {
             implementation(projects.core.designsystem)
             implementation(projects.core.presentation)
 
+            implementation(projects.feature.auth.data)
             implementation(projects.feature.auth.domain)
             implementation(projects.feature.auth.presentation)
 
@@ -29,6 +31,8 @@ kotlin {
             implementation(libs.cmp.components.resources)
             implementation(libs.jetbrains.lifecycle.viewmodel.compose)
             implementation(libs.jetbrains.lifecycle.runtime.compose)
+            implementation(libs.jetbrains.navigation.compose)
+            implementation(libs.bundles.koin.common)
         }
     }
 }
