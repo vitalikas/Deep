@@ -4,10 +4,8 @@ agp = "8.11.2"
 androidTools = "31.12.0"
 androidDesugarJdkLibs = "2.1.5"
 kotlin = "2.3.0"
+kotlinStdlib = "2.3.0"
 
-android-compileSdk = "36"
-android-minSdk = "24"
-android-targetSdk = "36"
 androidx-activity = "1.12.2"
 androidx-appcompat = "1.7.1"
 androidx-core = "1.17.0"
@@ -29,14 +27,15 @@ projectMinSdkVersion = "28"
 projectTargetSdkVersion = "36"
 projectCompileSdkVersion = "36"
 projectVersionCode = "1"
-kotlinStdlib = "2.3.0"
+
 runner = "1.7.0"
 core = "1.7.0"
-
-# Third party
 koin = "4.1.0"
 jetbrains-savedstate = "1.3.1"
 jetbrains-core-bundle = "1.0.1"
+
+# Third party
+buildkonfig = "0.17.1"
 
 [libraries]
 # Kotlin
@@ -94,6 +93,10 @@ android-desugarJdkLibs = { module = "com.android.tools:desugar_jdk_libs", versio
 # Testing
 junit = { module = "junit:junit", version.ref = "junit" }
 
+# BuildKonfig
+buildkonfig-gradlePlugin = { group = "com.codingfeline.buildkonfig", name = "buildkonfig-gradle-plugin", version.ref = "buildkonfig" }
+buildkonfig-compiler = { group = "com.codingfeline.buildkonfig", name = "buildkonfig-compiler", version.ref = "buildkonfig" }
+
 [plugins]
 # Android
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -106,6 +109,7 @@ convention-cmp-application = { id = "lt.vitalijus.convention.cmp.application", v
 convention-kmp-library = { id = "lt.vitalijus.convention.kmp.library", version = "unspecified" }
 convention-cmp-library = { id = "lt.vitalijus.convention.cmp.library", version = "unspecified" }
 convention-cmp-feature = { id = "lt.vitalijus.convention.cmp.feature", version = "unspecified" }
+convention-buildkonfig = { id = "lt.vitalijus.convention.buildkonfig", version = "unspecified" }
 
 # Kotlin
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
