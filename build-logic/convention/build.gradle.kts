@@ -45,5 +45,9 @@ gradlePlugin {
             id = "lt.vitalijus.convention.cmp.application"
             implementationClass = "CmpApplicationConventionPlugin"
         }
+        register("kmpLibrary") {
+            id = "lt.vitalijus.convention.kmp.library"
+            implementationClass = "KmpLibraryConventionPlugin"
+        }
     }
 }
