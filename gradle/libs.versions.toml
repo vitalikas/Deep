@@ -40,6 +40,7 @@ jetbrains-core-bundle = "1.0.1"
 
 # Third party
 buildkonfig = "0.17.1"
+kermit = "2.0.8"
 
 [libraries]
 # Kotlin
@@ -116,6 +117,9 @@ ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negoti
 ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "ktor" }
 ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+
+# Logging
+touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
 [plugins]
 # Android
