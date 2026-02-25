@@ -1,5 +1,5 @@
 import lt.vitalijus.deep.convention.configureAndroidTarget
-import lt.vitalijus.deep.convention.configureIosTargets
+import lt.vitalijus.deep.convention.configureIosTargetsApp
 import lt.vitalijus.deep.convention.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -17,7 +17,7 @@ class CmpApplicationConventionPlugin : Plugin<Project> {
             }
 
             configureAndroidTarget()
-            configureIosTargets()
+            configureIosTargetsApp()
 
             dependencies {
                 "debugImplementation"(libs.findLibrary("compose-uiTooling").get())
