@@ -10,8 +10,8 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 val LightColorScheme = lightColorScheme(
-    primary = DeepBrand500,
-    onPrimary = DeepBrand1000,
+    primary = DeepBrand600,
+    onPrimary = DeepBase0,
     primaryContainer = DeepBrand100,
     onPrimaryContainer = DeepBrand900,
 
@@ -30,15 +30,15 @@ val LightColorScheme = lightColorScheme(
     errorContainer = DeepRed200,
     onErrorContainer = DeepRed600,
 
-    background = DeepBrand1000,
-    onBackground = DeepBase0,
+    background = DeepBase0,
+    onBackground = DeepBase1000,
     surface = DeepBase0,
     onSurface = DeepBase1000,
     surfaceVariant = DeepBase100,
     onSurfaceVariant = DeepBase900,
 
-    outline = DeepBase1000Alpha8,
-    outlineVariant = DeepBase200,
+    outline = DeepBase200,
+    outlineVariant = DeepBase150,
 )
 
 val DarkColorScheme = darkColorScheme(

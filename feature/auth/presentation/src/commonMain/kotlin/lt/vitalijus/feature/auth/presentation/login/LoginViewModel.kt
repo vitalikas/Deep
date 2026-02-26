@@ -1,130 +1,69 @@
 package lt.vitalijus.feature.auth.presentation.login
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import lt.vitalijus.core.domain.util.DataError
-import lt.vitalijus.core.domain.util.onFailure
-import lt.vitalijus.core.domain.util.onSuccess
-import lt.vitalijus.core.presentation.util.UiText
+import lt.vitalijus.core.presentation.mvi.Middleware
+import lt.vitalijus.core.presentation.mvi.MviViewModel
+import lt.vitalijus.core.presentation.mvi.Reducer
+import lt.vitalijus.core.presentation.mvi.reducer
 import lt.vitalijus.feature.auth.domain.usecases.LoginUseCase
 
+/**
+ * Login ViewModel with MVI+Redux pattern.
+ *
+ * Features:
+ * - Reducer handles pure state transformations
+ * - Middleware handles side effects (API calls) - injected via constructor
+ * - All state updates go through Reducer only
+ */
 class LoginViewModel(
-    private val loginUseCase: LoginUseCase
-) : ViewModel() {
+    middleware: Middleware<LoginIntent, LoginState, LoginEffect>
+) : MviViewModel<LoginIntent, LoginState, LoginEffect>(
+    initialState = LoginState(),
+    reducer = createReducer(),
+    middleware = middleware
+) {
 
-    private val _state = MutableStateFlow(LoginState())
-    val state: StateFlow<LoginState> = _state.asStateFlow()
-
-    fun onEvent(event: LoginEvent) {
-        when (event) {
-            is LoginEvent.OnEmailChange -> {
-                updateState { copy(email = event.email, errorMessage = null) }
+    companion object {
+        /**
+         * Pure reducer - no side effects, just state transformations.
+         */
+        private fun createReducer(): Reducer<LoginState, LoginIntent> = reducer {
+            on<LoginIntent.OnEmailChange> { state, intent ->
+                state.copy(
+                    email = intent.email,
+                    errorMessage = null,
+                    isEmailValid = intent.email.isBlank() || LoginUseCase.isEmailValid(email = intent.email)
+                )
             }
 
-            is LoginEvent.OnPasswordChange -> {
-                updateState { copy(password = event.password, errorMessage = null) }
+            on<LoginIntent.OnPasswordChange> { state, intent ->
+                state.copy(
+                    password = intent.password,
+                    errorMessage = null
+                )
             }
 
-            is LoginEvent.OnTogglePasswordVisibility -> {
-                updateState { copy(isPasswordVisible = !isPasswordVisible) }
+            on<LoginIntent.OnTogglePasswordVisibility> { state, _ ->
+                state.copy(isPasswordVisible = !state.isPasswordVisible)
             }
 
-            is LoginEvent.OnLoginClick -> {
-                performLogin(onSuccess = event.onSuccess)
+            on<LoginIntent.OnLoginClick> { state, _ ->
+                // Set loading, middleware handles the API call
+                state.copy(
+                    isLoading = true,
+                    errorMessage = null
+                )
             }
 
-            is LoginEvent.OnErrorDismiss -> {
-                updateState { copy(errorMessage = null) }
+            on<LoginIntent.OnLoginError> { state, intent ->
+                state.copy(
+                    isLoading = false,
+                    errorMessage = intent.message
+                )
             }
-        }
-    }
 
-    /**
-     * Updates the state using the partial state update pattern (Redux-style).
-     * This allows for atomic state updates and better state consistency.
-     */
-    private fun updateState(update: LoginState.() -> LoginState) {
-        _state.update { it.update() }
-    }
-
-    private fun performLogin(onSuccess: () -> Unit) {
-        val currentState = _state.value
-
-        // Validation
-        val email = currentState.email.trim()
-        val password = currentState.password
-
-        if (email.isBlank()) {
-            updateState {
-                copy(errorMessage = UiText.DynamicString("Email cannot be empty"))
+            on<LoginIntent.OnErrorDismiss> { state, _ ->
+                state.copy(errorMessage = null)
             }
-            return
-        }
-
-        if (password.isBlank()) {
-            updateState {
-                copy(errorMessage = UiText.DynamicString("Password cannot be empty"))
-            }
-            return
-        }
-
-        // Set loading state
-        updateState {
-            copy(
-                isLoading = true,
-                errorMessage = null,
-                isLoginSuccessful = false
-            )
-        }
-
-        viewModelScope.launch {
-            loginUseCase(email = email, password = password)
-                .onSuccess { loginResult ->
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            isLoginSuccessful = true
-                        )
-                    }
-                    onSuccess()
-                }
-                .onFailure { error ->
-                    val errorMessage = when (error) {
-                        is DataError.Remote -> when (error) {
-                            DataError.Remote.UNAUTHORIZED ->
-                                UiText.DynamicString("Invalid email or password")
-
-                            DataError.Remote.BAD_REQUEST ->
-                                UiText.DynamicString("Invalid request")
-
-                            DataError.Remote.REQUEST_TIMEOUT ->
-                                UiText.DynamicString("Request timed out. Please try again.")
-
-                            DataError.Remote.NO_INTERNET ->
-                                UiText.DynamicString("No internet connection. Please check your connection.")
-
-                            DataError.Remote.SERVER_ERROR ->
-                                UiText.DynamicString("Server error. Please try again later.")
-
-                            else ->
-                                UiText.DynamicString("An error occurred: ${error.name}")
-                        }
-
-                        is DataError.Local ->
-                            UiText.DynamicString("A local error occurred: ${error.name}")
-                    }
-                    updateState {
-                        copy(
-                            isLoading = false,
-                            errorMessage = errorMessage
-                        )
-                    }
-                }
         }
     }
 }

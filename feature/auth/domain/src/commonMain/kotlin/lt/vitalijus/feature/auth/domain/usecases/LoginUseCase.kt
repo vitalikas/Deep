@@ -12,9 +12,31 @@ class LoginUseCase(
         email: String,
         password: String
     ): Result<LoginResult, DataError> {
+        val trimmedEmail = email.trim()
+        
+        // Validation
+        if (trimmedEmail.isBlank() || password.isBlank()) {
+            return Result.Failure(DataError.Validation.EMPTY_FIELDS)
+        }
+        
+        if (!isEmailValid(trimmedEmail)) {
+            return Result.Failure(DataError.Validation.INVALID_EMAIL)
+        }
+        
         return authRepository.login(
-            email = email.trim(),
+            email = trimmedEmail,
             password = password
         )
+    }
+    
+    companion object {
+        // RFC 5322 compliant email regex
+        private val EMAIL_REGEX = Regex(
+            "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"
+        )
+        
+        fun isEmailValid(email: String): Boolean {
+            return EMAIL_REGEX.matches(email)
+        }
     }
 }

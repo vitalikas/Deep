@@ -17,6 +17,9 @@ kotlin {
 
                 implementation(compose.components.resources)
                 implementation(libs.material3.adaptive)
+
+                // MVI - ViewModel support
+                implementation(libs.jetbrains.lifecycle.viewmodel)
             }
         }
 
