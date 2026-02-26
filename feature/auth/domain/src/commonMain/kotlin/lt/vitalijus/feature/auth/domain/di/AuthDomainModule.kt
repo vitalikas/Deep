@@ -1,6 +1,7 @@
 package lt.vitalijus.feature.auth.domain.di
 
 import lt.vitalijus.feature.auth.domain.usecases.GetCurrentUserUseCase
+import lt.vitalijus.feature.auth.domain.usecases.GetScansUseCase
 import lt.vitalijus.feature.auth.domain.usecases.IsAuthenticatedUseCase
 import lt.vitalijus.feature.auth.domain.usecases.LoginUseCase
 import lt.vitalijus.feature.auth.domain.usecases.LogoutUseCase
@@ -11,4 +12,5 @@ val authDomainModule = module {
     factory { GetCurrentUserUseCase(authRepository = get()) }
     factory { IsAuthenticatedUseCase(authRepository = get()) }
     factory { LogoutUseCase(authRepository = get()) }
+    factory { GetScansUseCase(authRepository = get()) }
 }

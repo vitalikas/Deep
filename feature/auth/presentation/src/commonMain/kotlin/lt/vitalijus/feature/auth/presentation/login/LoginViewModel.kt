@@ -1,6 +1,5 @@
 package lt.vitalijus.feature.auth.presentation.login
 
-import lt.vitalijus.core.presentation.mvi.Middleware
 import lt.vitalijus.core.presentation.mvi.MviViewModel
 
 /**
@@ -12,7 +11,7 @@ import lt.vitalijus.core.presentation.mvi.MviViewModel
  * - All state updates go through Reducer only
  */
 class LoginViewModel(
-    middleware: Middleware<LoginIntent, LoginState, LoginEffect>
+    middleware: LoginMiddleware
 ) : MviViewModel<LoginIntent, LoginState, LoginEffect>(
     initialState = LoginState(),
     reducer = createLoginReducer(),

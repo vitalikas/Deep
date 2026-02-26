@@ -48,7 +48,7 @@ class LoginMiddleware(
             password = password
         )
             .onSuccess {
-                emitEffect(LoginEffect.NavigateToHome)
+                emitEffect(LoginEffect.Navigate)
             }
             .onFailure { error: DataError ->
                 val errorMessage = mapError(error = error)

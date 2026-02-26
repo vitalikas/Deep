@@ -1,5 +1,7 @@
 package lt.vitalijus.feature.auth.domain
 
+import lt.vitalijus.core.domain.model.Scan
+
 data class User(
     val id: Long,
     val email: String,
@@ -8,16 +10,6 @@ data class User(
     val validTill: String? = null,
     val registrationDate: String? = null,
     val isLoggedIn: Boolean = true
-)
-
-data class Scan(
-    val id: Long,
-    val lat: Double,
-    val lon: Double,
-    val name: String? = null,
-    val date: String? = null,
-    val scanPoints: Int,
-    val mode: Int
 )
 
 data class LoginResult(

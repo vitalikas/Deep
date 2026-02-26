@@ -1,11 +1,10 @@
 package lt.vitalijus.feature.auth.data.mappers
 
+import lt.vitalijus.core.domain.model.Scan
 import lt.vitalijus.feature.auth.data.local.UserEntity
-import lt.vitalijus.feature.auth.data.network.LoginDataDto
 import lt.vitalijus.feature.auth.data.network.LoginResponseDto
 import lt.vitalijus.feature.auth.data.network.ScanDto
 import lt.vitalijus.feature.auth.domain.LoginResult
-import lt.vitalijus.feature.auth.domain.Scan
 import lt.vitalijus.feature.auth.domain.User
 
 fun LoginResponseDto.toDomain(): LoginResult? {
@@ -24,7 +23,10 @@ fun LoginResponseDto.toDomain(): LoginResult? {
 
     val scans = this.scans?.map { it.toDomain() } ?: emptyList()
 
-    return LoginResult(user = user, scans = scans)
+    return LoginResult(
+        user = user,
+        scans = scans
+    )
 }
 
 fun ScanDto.toDomain(): Scan {

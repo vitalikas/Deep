@@ -39,7 +39,9 @@ fun interface Reducer<S : UiState, I : UiIntent> {
  * 2. At runtime, the builder finds the first matching handler using `isInstance`
  * 3. If no handler matches, returns the state unchanged
  */
-fun <S : UiState, I : UiIntent> reducer(builder: ReducerBuilder<S, I>.() -> Unit): Reducer<S, I> {
+fun <S : UiState, I : UiIntent> reducer(
+    builder: ReducerBuilder<S, I>.() -> Unit
+): Reducer<S, I> {
     return ReducerBuilder<S, I>() // Creating an empty builder
         .apply(builder) // Calling a lambda with the builder as a receiver
         .build() // Building the reducer
@@ -58,7 +60,7 @@ class ReducerBuilder<S : UiState, I : UiIntent> {
         // crossinline = lambda cannot return early
         @Suppress("UNCHECKED_CAST")
         handlers.add(
-            T::class as KClass<out I> to { state: S, intent: I -> // Pair<KClass, Lambda>
+            T::class as KClass<out I> to { state: S, intent: I -> // Pair<KClass, Lambda)
                 block(state, intent as T) // cast T, calling a block
             }
         )

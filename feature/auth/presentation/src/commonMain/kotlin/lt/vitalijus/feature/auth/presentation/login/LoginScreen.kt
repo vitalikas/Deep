@@ -43,7 +43,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun LoginScreenRoot(
     viewModel: LoginViewModel = koinViewModel(),
-    onLoginSuccess: () -> Unit = {}
+    onNavigateToScans: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -51,7 +51,7 @@ fun LoginScreenRoot(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is LoginEffect.NavigateToHome -> onLoginSuccess()
+                is LoginEffect.Navigate -> onNavigateToScans()
                 is LoginEffect.ShowToast -> {
                     // show toast
                 }
@@ -61,16 +61,14 @@ fun LoginScreenRoot(
 
     LoginScreen(
         state = state,
-        onIntent = viewModel::dispatch,
-        onLoginSuccess = onLoginSuccess
+        onIntent = viewModel::dispatch
     )
 }
 
 @Composable
 internal fun LoginScreen(
     state: LoginState,
-    onIntent: (LoginIntent) -> Unit,
-    onLoginSuccess: () -> Unit
+    onIntent: (LoginIntent) -> Unit
 ) {
     val deviceConfig = currentDeviceConfiguration()
 

@@ -28,7 +28,6 @@ internal fun createLoginReducer(): Reducer<LoginState, LoginIntent> = reducer {
     }
 
     on<LoginIntent.OnLoginClick> { state, _ ->
-        // Set loading, middleware handles the API call
         state.copy(
             isLoading = true,
             errorMessage = null

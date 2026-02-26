@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
  * ViewModel with integrated MVI store.
  *
  * Uses [viewModelScope] for coroutine lifecycle management.
+ * Each ViewModel has its own isolated state, reducer and middleware.
  */
 abstract class MviViewModel<I : UiIntent, S : UiState, E : UiEffect>(
     initialState: S,
