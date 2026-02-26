@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import lt.vitalijus.feature.scan.domain.BathymetryFeature
+import lt.vitalijus.feature.scan.domain.Polygon
 
 /**
  * Scan detail screen with bathymetry map.
@@ -101,6 +101,7 @@ private fun ScanDetailContent(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
+
                 state.errorMessage != null -> {
                     Text(
                         text = state.errorMessage,
@@ -111,13 +112,15 @@ private fun ScanDetailContent(
                         color = MaterialTheme.colorScheme.error
                     )
                 }
-                state.features.isNotEmpty() -> {
+
+                state.polygons.isNotEmpty() -> {
                     BathymetryMap(
-                        features = state.features,
+                        features = state.polygons,
                         bbox = state.bbox,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
+
                 else -> {
                     Text(
                         text = "No bathymetry data available",
@@ -143,7 +146,7 @@ private fun ScanDetailContent(
  */
 @Composable
 expect fun BathymetryMap(
-    features: List<BathymetryFeature>,
+    features: List<Polygon>,
     bbox: List<Double>,
     modifier: Modifier = Modifier
 )

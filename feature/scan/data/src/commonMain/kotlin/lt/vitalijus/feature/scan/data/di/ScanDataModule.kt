@@ -5,7 +5,7 @@ import lt.vitalijus.feature.auth.domain.AuthRepository
 import lt.vitalijus.feature.scan.data.network.ScanApiService
 import lt.vitalijus.feature.scan.data.repository.ScanRepositoryImpl
 import lt.vitalijus.feature.scan.domain.ScanRepository
-import lt.vitalijus.feature.scan.domain.usecases.GetBathymetryUseCase
+import lt.vitalijus.feature.scan.domain.GetBathymetryUseCase
 import org.koin.dsl.module
 
 val scanDataModule = module {

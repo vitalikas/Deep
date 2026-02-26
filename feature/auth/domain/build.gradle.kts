@@ -16,6 +16,7 @@ kotlin {
                 implementation(libs.koin.core)
 
                 implementation(projects.core.domain)
+                implementation(projects.feature.scan.domain)
             }
         }
 

@@ -1,6 +1,6 @@
 package lt.vitalijus.feature.auth.domain
 
-import lt.vitalijus.core.domain.model.Scan
+import lt.vitalijus.feature.scan.domain.model.Scan
 
 data class User(
     val id: Long,

@@ -6,15 +6,14 @@ import io.ktor.client.request.parameter
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.Result
 import lt.vitalijus.feature.auth.domain.AuthRepository
-import lt.vitalijus.feature.scan.domain.Bathymetry
-import lt.vitalijus.feature.scan.domain.BathymetryFeature
+import lt.vitalijus.feature.scan.domain.BathymetryData
+import lt.vitalijus.feature.scan.domain.Polygon
 import lt.vitalijus.feature.scan.domain.PolygonGeometry
 
 class ScanApiService(
@@ -26,7 +25,7 @@ class ScanApiService(
         private const val GEODATA_ENDPOINT = "/api/geoData"
     }
 
-    suspend fun getBathymetry(scanId: Long): Result<Bathymetry, DataError.Remote> {
+    suspend fun getBathymetry(scanId: Long): Result<BathymetryData, DataError.Remote> {
         val token = authRepository.getCurrentToken()
             ?: return Result.Failure(DataError.Remote.UNAUTHORIZED)
 
@@ -56,10 +55,10 @@ class ScanApiService(
         }
     }
 
-    private fun parseBathymetryJson(jsonText: String): Bathymetry {
+    private fun parseBathymetryJson(jsonText: String): BathymetryData {
         val json = Json.parseToJsonElement(jsonText).jsonObject
         val bathymetryObj = json["bathymetry"]?.jsonObject
-            ?: return Bathymetry("FeatureCollection", emptyList(), emptyList())
+            ?: return BathymetryData("FeatureCollection", emptyList(), emptyList())
 
         val bbox = bathymetryObj["bbox"]?.jsonArray?.map {
             it.jsonPrimitive.content.toDoubleOrNull() ?: 0.0
@@ -85,7 +84,7 @@ class ScanApiService(
                 }
             } ?: emptyList()
 
-            BathymetryFeature(
+            Polygon(
                 id = id,
                 depth = depth,
                 geometry = PolygonGeometry(
@@ -96,7 +95,7 @@ class ScanApiService(
             )
         } ?: emptyList()
 
-        return Bathymetry(
+        return BathymetryData(
             type = "FeatureCollection",
             bbox = bbox,
             features = features

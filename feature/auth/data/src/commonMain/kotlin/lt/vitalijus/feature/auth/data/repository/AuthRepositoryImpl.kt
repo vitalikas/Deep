@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import lt.vitalijus.core.domain.logging.DeepLogger
-import lt.vitalijus.core.domain.model.Scan
+import lt.vitalijus.feature.scan.domain.model.Scan
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.EmptyResult
 import lt.vitalijus.core.domain.util.Result

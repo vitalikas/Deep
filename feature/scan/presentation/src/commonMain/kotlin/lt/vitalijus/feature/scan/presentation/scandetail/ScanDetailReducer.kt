@@ -18,7 +18,7 @@ internal fun createScanDetailReducer(): Reducer<ScanDetailState, ScanDetailInten
     on<ScanDetailIntent.OnBathymetryLoaded> { state, intent ->
         state.copy(
             isLoading = false,
-            features = intent.features,
+            polygons = intent.features,
             bbox = intent.bbox,
             errorMessage = null
         )

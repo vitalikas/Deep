@@ -1,7 +1,7 @@
 package lt.vitalijus.feature.auth.domain
 
 import kotlinx.coroutines.flow.Flow
-import lt.vitalijus.core.domain.model.Scan
+import lt.vitalijus.feature.scan.domain.model.Scan
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.EmptyResult
 import lt.vitalijus.core.domain.util.Result

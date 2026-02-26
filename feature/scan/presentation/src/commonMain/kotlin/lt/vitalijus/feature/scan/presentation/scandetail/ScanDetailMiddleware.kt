@@ -3,7 +3,7 @@ package lt.vitalijus.feature.scan.presentation.scandetail
 import lt.vitalijus.core.domain.util.onFailure
 import lt.vitalijus.core.domain.util.onSuccess
 import lt.vitalijus.core.presentation.mvi.Middleware
-import lt.vitalijus.feature.scan.domain.usecases.GetBathymetryUseCase
+import lt.vitalijus.feature.scan.domain.GetBathymetryUseCase
 
 /**
  * Middleware for handling scan detail side effects.

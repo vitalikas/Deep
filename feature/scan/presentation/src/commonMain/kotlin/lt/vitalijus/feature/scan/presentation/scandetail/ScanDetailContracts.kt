@@ -3,7 +3,7 @@ package lt.vitalijus.feature.scan.presentation.scandetail
 import lt.vitalijus.core.presentation.mvi.UiEffect
 import lt.vitalijus.core.presentation.mvi.UiIntent
 import lt.vitalijus.core.presentation.mvi.UiState
-import lt.vitalijus.feature.scan.domain.BathymetryFeature
+import lt.vitalijus.feature.scan.domain.Polygon
 
 /**
  * Scan detail UI state with MVI pattern.
@@ -11,7 +11,7 @@ import lt.vitalijus.feature.scan.domain.BathymetryFeature
 data class ScanDetailState(
     val scanId: Long = 0,
     val scanName: String = "",
-    val features: List<BathymetryFeature> = emptyList(),
+    val polygons: List<Polygon> = emptyList(),
     val bbox: List<Double> = emptyList(),
     val isLoading: Boolean = false,
     val errorMessage: String? = null
@@ -23,9 +23,10 @@ data class ScanDetailState(
 sealed class ScanDetailIntent : UiIntent {
     data class LoadScan(val scanId: Long, val scanName: String) : ScanDetailIntent()
     data class OnBathymetryLoaded(
-        val features: List<BathymetryFeature>,
+        val features: List<Polygon>,
         val bbox: List<Double>
     ) : ScanDetailIntent()
+
     data class OnError(val message: String) : ScanDetailIntent()
     data object OnBackClick : ScanDetailIntent()
 }

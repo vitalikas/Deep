@@ -19,11 +19,18 @@ class ScanListMiddleware(
         emitEffect: suspend (ScanListEffect) -> Unit
     ) {
         when (intent) {
-            is ScanListIntent.LoadScans, is ScanListIntent.OnRefresh -> loadScans(dispatchIntent, emitEffect)
+            is ScanListIntent.LoadScans, is ScanListIntent.OnRefresh -> {
+                loadScans(
+                    dispatchIntent = dispatchIntent,
+                    emitEffect = emitEffect
+                )
+            }
+
             is ScanListIntent.OnScanClick -> {
                 emitEffect(ScanListEffect.NavigateToScanDetail(intent.scanId))
             }
-            else -> { } // OnScansLoaded and OnError are handled by reducer only
+
+            else -> {} // OnScansLoaded and OnError are handled by reducer only
         }
     }
 
@@ -33,24 +40,11 @@ class ScanListMiddleware(
     ) {
         getScansUseCase()
             .onSuccess { scans ->
-                val uiModels = scans.map { scan ->
-                    ScanUiModel(
-                        id = scan.id,
-                        name = scan.name ?: "Scan #${scan.id}",
-                        date = formatDate(scan.date),
-                        location = "${scan.lat}, ${scan.lon}",
-                        scanPoints = scan.scanPoints
-                    )
-                }
-                dispatchIntent(ScanListIntent.OnScansLoaded(uiModels))
+                dispatchIntent(ScanListIntent.OnScansLoaded(scans = scans.toUiModels()))
             }
             .onFailure { error ->
-                dispatchIntent(ScanListIntent.OnError("Failed to load scans: ${error}"))
-                emitEffect(ScanListEffect.ShowToast("Failed to load scans"))
+                dispatchIntent(ScanListIntent.OnError(message = "Failed to load scans: $error"))
+                emitEffect(ScanListEffect.ShowToast(message = "Failed to load scans"))
             }
-    }
-
-    private fun formatDate(dateString: String?): String {
-        return dateString ?: "Unknown date"
     }
 }

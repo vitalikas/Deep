@@ -1,6 +1,6 @@
 package lt.vitalijus.feature.auth.data.mappers
 
-import lt.vitalijus.core.domain.model.Scan
+import lt.vitalijus.feature.scan.domain.model.Scan
 import lt.vitalijus.feature.auth.data.local.UserEntity
 import lt.vitalijus.feature.auth.data.network.LoginResponseDto
 import lt.vitalijus.feature.auth.data.network.ScanDto

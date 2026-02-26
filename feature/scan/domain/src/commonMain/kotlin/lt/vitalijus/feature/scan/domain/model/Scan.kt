@@ -1,4 +1,4 @@
-package lt.vitalijus.core.domain.model
+package lt.vitalijus.feature.scan.domain.model
 
 /**
  * Domain model for a scan (batimetric record).

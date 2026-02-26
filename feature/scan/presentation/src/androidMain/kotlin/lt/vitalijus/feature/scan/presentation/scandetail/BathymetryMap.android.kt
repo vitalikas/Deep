@@ -4,15 +4,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.toColorInt
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
-import lt.vitalijus.feature.scan.domain.BathymetryFeature
-import lt.vitalijus.feature.scan.domain.getDepthColor
-import androidx.core.graphics.toColorInt
+import lt.vitalijus.feature.scan.domain.DepthColor
+import lt.vitalijus.feature.scan.domain.Polygon
 
 /**
  * Android implementation of BathymetryMap using Google Maps Compose.
@@ -21,7 +20,7 @@ import androidx.core.graphics.toColorInt
  */
 @Composable
 actual fun BathymetryMap(
-    features: List<BathymetryFeature>,
+    features: List<Polygon>,
     bbox: List<Double>,
     modifier: Modifier
 ) {
@@ -49,7 +48,7 @@ actual fun BathymetryMap(
         cameraPositionState = cameraPositionState
     ) {
         features.forEach { feature ->
-            val color = getDepthColor(feature.depth)
+            val color = DepthColor.fromDepth(feature.depth)
             // Convert GeoJSON coordinates to LatLng list
             // GeoJSON: [lon, lat, depth] -> Google Maps: LatLng(lat, lon)
             val points = feature.geometry.coordinates.firstOrNull()?.map { coord ->
