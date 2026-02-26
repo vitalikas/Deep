@@ -11,6 +11,7 @@ import lt.vitalijus.core.data.di.coreDataModule
 import lt.vitalijus.feature.auth.data.di.authDataModule
 import lt.vitalijus.feature.auth.domain.di.authDomainModule
 import lt.vitalijus.feature.auth.presentation.di.authPresentationModule
+import lt.vitalijus.feature.scan.data.di.scanDataModule
 import lt.vitalijus.feature.scan.presentation.di.scanPresentationModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
@@ -37,6 +38,7 @@ class DeepApplication : Application() {
                 authDataModule,
                 authDomainModule,
                 authPresentationModule,
+                scanDataModule,
                 scanPresentationModule
             )
         }

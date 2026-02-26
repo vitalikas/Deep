@@ -1,4 +1,5 @@
 import com.android.build.api.dsl.ApplicationExtension
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import lt.vitalijus.deep.convention.configureKotlinAndroid
 import lt.vitalijus.deep.convention.libs
 import org.gradle.api.Plugin
@@ -21,6 +22,12 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     targetSdk = libs.findVersion("projectTargetSdkVersion").get().toString().toInt()
                     versionCode = libs.findVersion("projectVersionCode").get().toString().toInt()
                     versionName = libs.findVersion("projectVersionName").get().toString()
+
+                    // Provide manifest placeholder for Google Maps API key
+                    val apiKey = gradleLocalProperties(rootDir, rootProject.providers)
+                        .getProperty("API_KEY")
+                        ?: throw IllegalStateException("Missing API_KEY property in local.properties")
+                    manifestPlaceholders["GOOGLE_MAPS_API_KEY"] = apiKey
                 }
                 packaging {
                     resources {

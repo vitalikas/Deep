@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.convention.cmp.application)
+    alias(libs.plugins.convention.buildkonfig)
 }
 
 kotlin {
@@ -36,3 +37,4 @@ kotlin {
         }
     }
 }
+

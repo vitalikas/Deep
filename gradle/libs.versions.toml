@@ -40,6 +40,7 @@ jetbrains-core-bundle = "1.0.1"
 adaptive = "1.2.0-alpha04"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.6.2"
+maps-compose = "4.3.3"
 
 # Third party
 buildkonfig = "0.17.1"
@@ -130,6 +131,9 @@ touchlab-kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 material3-adaptive = { module = "org.jetbrains.compose.material3.adaptive:adaptive", version.ref = "adaptive" }
 material3-adaptive-layout = { module = "org.jetbrains.compose.material3.adaptive:adaptive-layout", version.ref = "adaptive" }
 material3-adaptive-navigation = { module = "org.jetbrains.compose.material3.adaptive:adaptive-navigation", version.ref = "adaptive" }
+
+# Google Maps
+maps-compose = { module = "com.google.maps.android:maps-compose", version.ref = "maps-compose" }
 
 [plugins]
 # Android
