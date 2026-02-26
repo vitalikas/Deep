@@ -11,8 +11,8 @@ kotlin {
 
                 implementation(projects.core.domain)
                 implementation(projects.core.data)
+                implementation(projects.core.database)
                 implementation(projects.feature.scan.domain)
-                implementation(projects.feature.scan.database)
                 implementation(projects.feature.auth.domain)
 
                 implementation(libs.bundles.koin.common)

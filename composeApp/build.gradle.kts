@@ -12,6 +12,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(projects.core.data)
+            implementation(projects.core.database)
             implementation(projects.core.domain)
             implementation(projects.core.designsystem)
             implementation(projects.core.presentation)
@@ -22,7 +23,6 @@ kotlin {
 
             implementation(projects.feature.scan.domain)
             implementation(projects.feature.scan.data)
-            implementation(projects.feature.scan.database)
             implementation(projects.feature.scan.presentation)
 
             implementation(libs.cmp.runtime)
@@ -37,4 +37,3 @@ kotlin {
         }
     }
 }
-

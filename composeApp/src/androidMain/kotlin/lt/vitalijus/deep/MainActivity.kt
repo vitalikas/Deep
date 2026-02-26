@@ -8,11 +8,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import lt.vitalijus.core.data.di.coreDataModule
+import lt.vitalijus.core.database.di.coreDatabaseModule
 import lt.vitalijus.feature.auth.data.di.authDataModule
 import lt.vitalijus.feature.auth.domain.di.authDomainModule
 import lt.vitalijus.feature.auth.presentation.di.authPresentationModule
 import lt.vitalijus.feature.scan.data.di.scanDataModule
-import lt.vitalijus.feature.scan.database.di.scanDatabaseModule
 import lt.vitalijus.feature.scan.domain.di.scanDomainModule
 import lt.vitalijus.feature.scan.presentation.di.scanPresentationModule
 import org.koin.android.ext.koin.androidContext
@@ -37,7 +37,7 @@ class DeepApplication : Application() {
             androidContext(this@DeepApplication)
             modules(
                 coreDataModule,
-                scanDatabaseModule,
+                coreDatabaseModule,
                 scanDomainModule,
                 scanDataModule,
                 scanPresentationModule,

@@ -12,6 +12,7 @@ kotlin {
 
                 implementation(projects.core.domain)
                 implementation(projects.core.data)
+                implementation(projects.core.database)
                 implementation(projects.feature.auth.domain)
                 implementation(projects.feature.scan.domain)
 

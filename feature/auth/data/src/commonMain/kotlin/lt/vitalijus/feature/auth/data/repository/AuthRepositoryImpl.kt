@@ -7,7 +7,7 @@ import lt.vitalijus.core.domain.logging.DeepLogger
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.EmptyResult
 import lt.vitalijus.core.domain.util.Result
-import lt.vitalijus.feature.auth.data.local.UserDao
+import lt.vitalijus.core.database.dao.UserDao
 import lt.vitalijus.feature.auth.data.mappers.toDomain
 import lt.vitalijus.feature.auth.data.mappers.toEntity
 import lt.vitalijus.feature.auth.data.network.AuthApiService

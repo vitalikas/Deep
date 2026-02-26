@@ -1,10 +1,10 @@
 package lt.vitalijus.feature.scan.data.di
 
 import lt.vitalijus.core.data.networking.HttpClientFactory
+import lt.vitalijus.core.database.dao.ScanDao
 import lt.vitalijus.feature.auth.domain.AuthRepository
 import lt.vitalijus.feature.scan.data.network.ScanApiService
 import lt.vitalijus.feature.scan.data.repository.ScanRepositoryImpl
-import lt.vitalijus.feature.scan.database.ScanDao
 import lt.vitalijus.feature.scan.domain.GetBathymetryUseCase
 import lt.vitalijus.feature.scan.domain.ScanRepository
 import org.koin.dsl.module

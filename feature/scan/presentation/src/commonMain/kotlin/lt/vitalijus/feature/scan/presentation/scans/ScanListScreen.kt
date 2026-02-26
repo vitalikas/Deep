@@ -37,7 +37,9 @@ fun ScanListScreenRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.dispatch(intent = ScanListIntent.LoadScans)
+        if (state.scans.isEmpty() && !state.isLoading) {
+            viewModel.dispatch(intent = ScanListIntent.LoadScans)
+        }
     }
 
     // Handle effects

@@ -51,9 +51,11 @@ fun ScanDetailScreen(
         }
     }
 
-    // Load scan data on first composition
+    // Load scan data on first composition (not on rotation if already loaded)
     LaunchedEffect(scanId) {
-        viewModel.dispatch(ScanDetailIntent.LoadScan(scanId, scanName))
+        if (state.polygons.isEmpty() && !state.isLoading) {
+            viewModel.dispatch(ScanDetailIntent.LoadScan(scanId, scanName))
+        }
     }
 
     ScanDetailContent(
