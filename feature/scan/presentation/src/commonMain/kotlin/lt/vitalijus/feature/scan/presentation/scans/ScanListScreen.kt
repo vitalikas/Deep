@@ -3,6 +3,7 @@ package lt.vitalijus.feature.scan.presentation.scans
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -36,7 +37,7 @@ fun ScanListScreenRoot(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.dispatch(ScanListIntent.LoadScans)
+        viewModel.dispatch(intent = ScanListIntent.LoadScans)
     }
 
     // Handle effects
@@ -80,14 +81,16 @@ internal fun ScanListScreen(
                 state.isLoading && state.scans.isEmpty() -> {
                     CircularProgressIndicator()
                 }
+
                 state.scans.isEmpty() -> {
                     EmptyScansView()
                 }
+
                 else -> {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp)
+                        contentPadding = PaddingValues(16.dp)
                     ) {
                         items(
                             items = state.scans,
@@ -95,7 +98,9 @@ internal fun ScanListScreen(
                         ) { scan ->
                             ScanItem(
                                 scan = scan,
-                                onClick = { onIntent(ScanListIntent.OnScanClick(scan.id)) }
+                                onClick = {
+                                    onIntent(ScanListIntent.OnScanClick(scanId = scan.id))
+                                }
                             )
                         }
                     }

@@ -11,24 +11,19 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.Result
-import lt.vitalijus.feature.auth.domain.AuthRepository
 import lt.vitalijus.feature.scan.domain.BathymetryData
 import lt.vitalijus.feature.scan.domain.Polygon
 import lt.vitalijus.feature.scan.domain.PolygonGeometry
 
 class ScanApiService(
-    private val httpClient: HttpClient,
-    private val authRepository: AuthRepository
+    private val httpClient: HttpClient
 ) {
     companion object {
         private const val BASE_URL = "https://bathus.staging.deeper.eu"
         private const val GEODATA_ENDPOINT = "/api/geoData"
     }
 
-    suspend fun getBathymetry(scanId: Long): Result<BathymetryData, DataError.Remote> {
-        val token = authRepository.getCurrentToken()
-            ?: return Result.Failure(DataError.Remote.UNAUTHORIZED)
-
+    suspend fun getBathymetry(scanId: Long, token: String): Result<BathymetryData, DataError.Remote> {
         return try {
             val response = httpClient.get("$BASE_URL$GEODATA_ENDPOINT") {
                 parameter("grid", "FAST")

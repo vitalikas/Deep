@@ -3,7 +3,7 @@ package lt.vitalijus.feature.scan.presentation.scans
 import lt.vitalijus.core.domain.util.onFailure
 import lt.vitalijus.core.domain.util.onSuccess
 import lt.vitalijus.core.presentation.mvi.Middleware
-import lt.vitalijus.feature.auth.domain.usecases.GetScansUseCase
+import lt.vitalijus.feature.scan.domain.usecases.GetScansUseCase
 
 /**
  * Middleware for handling scan list side effects.
@@ -27,7 +27,7 @@ class ScanListMiddleware(
             }
 
             is ScanListIntent.OnScanClick -> {
-                emitEffect(ScanListEffect.NavigateToScanDetail(intent.scanId))
+                emitEffect(ScanListEffect.NavigateToScanDetail(scanId = intent.scanId))
             }
 
             else -> {} // OnScansLoaded and OnError are handled by reducer only

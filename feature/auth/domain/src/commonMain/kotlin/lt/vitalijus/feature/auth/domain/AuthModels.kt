@@ -1,6 +1,18 @@
 package lt.vitalijus.feature.auth.domain
 
-import lt.vitalijus.feature.scan.domain.model.Scan
+/**
+ * Lightweight scan info for passing scan data after login.
+ * The caller should map this to full Scan model.
+ */
+data class ScanInfo(
+    val id: Long,
+    val lat: Double,
+    val lon: Double,
+    val name: String?,
+    val date: String?,
+    val scanPoints: Int,
+    val mode: Int
+)
 
 data class User(
     val id: Long,
@@ -14,5 +26,5 @@ data class User(
 
 data class LoginResult(
     val user: User,
-    val scans: List<Scan>
+    val scans: List<ScanInfo>
 )

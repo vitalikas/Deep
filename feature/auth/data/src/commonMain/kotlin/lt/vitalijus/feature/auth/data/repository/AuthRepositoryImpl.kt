@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import lt.vitalijus.core.domain.logging.DeepLogger
-import lt.vitalijus.feature.scan.domain.model.Scan
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.EmptyResult
 import lt.vitalijus.core.domain.util.Result
@@ -28,13 +27,6 @@ class AuthRepositoryImpl(
 
     override val isAuthenticated: Flow<Boolean> = tokenManager.isAuthenticated
 
-    // Scans from last login, stored in memory
-    private var cachedScans: List<Scan> = emptyList()
-
-    override val scans: Flow<List<Scan>> = kotlinx.coroutines.flow.flow {
-        emit(cachedScans)
-    }
-
     override suspend fun login(email: String, password: String): Result<LoginResult, DataError> {
         logger.debug(message = "Attempting login for email: $email")
 
@@ -44,7 +36,6 @@ class AuthRepositoryImpl(
         return when (networkResult) {
             is Result.Success -> {
                 val loginResult = networkResult.data.toDomain()
-                val scanDtos = networkResult.data.scans
 
                 if (loginResult != null) {
                     // Save to local database
@@ -54,9 +45,8 @@ class AuthRepositoryImpl(
                         token = loginResult.user.token,
                         validTill = loginResult.user.validTill
                     )
-                    // Cache scans from login response
-                    cachedScans = scanDtos?.map { it.toDomain() } ?: emptyList()
-                    logger.debug(message = "Login successful for user: ${loginResult.user.id}, loaded ${cachedScans.size} scans")
+                    // Note: scans are in loginResult.scans, caller should save them to ScanRepository
+                    logger.debug(message = "Login successful for user: ${loginResult.user.id}, loaded ${loginResult.scans.size} scans")
                     Result.Success(loginResult)
                 } else {
                     logger.error(message = "Login response parsing failed")
@@ -80,7 +70,7 @@ class AuthRepositoryImpl(
                 tokenManager.clearToken(it.id)
                 userDao.logout(it.id)
             }
-            cachedScans = emptyList()
+            // Note: caller should clear scans from ScanRepository
             logger.debug(message = "Logout successful")
             Result.Success(Unit)
         } catch (e: Exception) {
@@ -96,9 +86,5 @@ class AuthRepositoryImpl(
     override suspend fun isTokenValid(): Boolean {
         val currentUser = userDao.getCurrentUser().first()
         return tokenManager.isTokenValid(currentUser?.validTill)
-    }
-
-    override suspend fun getScans(): Result<List<Scan>, DataError> {
-        return Result.Success(cachedScans)
     }
 }

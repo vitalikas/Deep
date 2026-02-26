@@ -6,14 +6,18 @@ import lt.vitalijus.core.domain.util.onSuccess
 import lt.vitalijus.core.presentation.mvi.Middleware
 import lt.vitalijus.core.presentation.util.UiText
 import lt.vitalijus.feature.auth.domain.usecases.LoginUseCase
+import lt.vitalijus.feature.auth.presentation.mappers.toScans
+import lt.vitalijus.feature.scan.domain.ScanRepository
 
 /**
  * Middleware for handling login side effects.
  *
  * @param loginUseCase Use case for authentication operations
+ * @param scanRepository Repository for saving scans after successful login
  */
 class LoginMiddleware(
-    private val loginUseCase: LoginUseCase
+    private val loginUseCase: LoginUseCase,
+    private val scanRepository: ScanRepository
 ) : Middleware<LoginIntent, LoginState, LoginEffect> {
 
     override suspend fun handle(
@@ -47,7 +51,9 @@ class LoginMiddleware(
             email = email,
             password = password
         )
-            .onSuccess {
+            .onSuccess { loginResult ->
+                // Save scans to repository - this is the source of truth
+                scanRepository.saveScans(loginResult.scans.toScans())
                 emitEffect(LoginEffect.Navigate)
             }
             .onFailure { error: DataError ->
