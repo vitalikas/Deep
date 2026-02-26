@@ -10,8 +10,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
-import lt.vitalijus.feature.scan.domain.DepthColor
-import lt.vitalijus.feature.scan.domain.Polygon
+import lt.vitalijus.feature.scan.domain.model.Polygon
+import lt.vitalijus.feature.scan.domain.util.DepthColor
 
 /**
  * Android implementation of BathymetryMap using Google Maps Compose.
@@ -20,7 +20,7 @@ import lt.vitalijus.feature.scan.domain.Polygon
  */
 @Composable
 actual fun BathymetryMap(
-    features: List<Polygon>,
+    polygons: List<Polygon>,
     bbox: List<Double>,
     modifier: Modifier
 ) {
@@ -28,12 +28,12 @@ actual fun BathymetryMap(
     val centerLat = if (bbox.size >= 4) {
         (bbox[0] + bbox[2]) / 2
     } else {
-        features.firstOrNull()?.geometry?.coordinates?.firstOrNull()?.firstOrNull()?.get(1) ?: 0.0
+        polygons.firstOrNull()?.geometry?.coordinates?.firstOrNull()?.firstOrNull()?.get(1) ?: 0.0
     }
     val centerLon = if (bbox.size >= 4) {
         (bbox[1] + bbox[3]) / 2
     } else {
-        features.firstOrNull()?.geometry?.coordinates?.firstOrNull()?.firstOrNull()?.get(0) ?: 0.0
+        polygons.firstOrNull()?.geometry?.coordinates?.firstOrNull()?.firstOrNull()?.get(0) ?: 0.0
     }
 
     val cameraPositionState = rememberCameraPositionState {
@@ -47,11 +47,12 @@ actual fun BathymetryMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState
     ) {
-        features.forEach { feature ->
-            val color = DepthColor.fromDepth(feature.depth)
+        polygons.forEach { polygon ->
+            val color = DepthColor.fromDepth(depth = polygon.depth)
+
             // Convert GeoJSON coordinates to LatLng list
             // GeoJSON: [lon, lat, depth] -> Google Maps: LatLng(lat, lon)
-            val points = feature.geometry.coordinates.firstOrNull()?.map { coord ->
+            val points = polygon.geometry.coordinates.firstOrNull()?.map { coord ->
                 LatLng(
                     coord.getOrElse(1) { 0.0 }, // lat
                     coord.getOrElse(0) { 0.0 }  // lon

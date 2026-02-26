@@ -3,7 +3,7 @@ package lt.vitalijus.feature.scan.presentation.scandetail
 import lt.vitalijus.core.domain.util.onFailure
 import lt.vitalijus.core.domain.util.onSuccess
 import lt.vitalijus.core.presentation.mvi.Middleware
-import lt.vitalijus.feature.scan.domain.GetBathymetryUseCase
+import lt.vitalijus.feature.scan.domain.usecase.GetBathymetryUseCase
 
 /**
  * Middleware for handling scan detail side effects.
@@ -26,10 +26,12 @@ class ScanDetailMiddleware(
                     emitEffect = emitEffect
                 )
             }
+
             is ScanDetailIntent.OnBackClick -> {
                 emitEffect(ScanDetailEffect.NavigateBack)
             }
-            else -> { } // OnBathymetryLoaded and OnError are handled by reducer
+
+            else -> {} // OnBathymetryLoaded and OnError are handled by reducer
         }
     }
 
@@ -39,11 +41,11 @@ class ScanDetailMiddleware(
         emitEffect: suspend (ScanDetailEffect) -> Unit
     ) {
         getBathymetryUseCase(scanId)
-            .onSuccess { bathymetry ->
+            .onSuccess { bathymetryData ->
                 dispatchIntent(
                     ScanDetailIntent.OnBathymetryLoaded(
-                        features = bathymetry.features,
-                        bbox = bathymetry.bbox
+                        polygons = bathymetryData.features,
+                        bbox = bathymetryData.bbox
                     )
                 )
             }

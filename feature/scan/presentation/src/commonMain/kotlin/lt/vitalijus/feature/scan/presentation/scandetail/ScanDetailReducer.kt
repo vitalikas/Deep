@@ -15,20 +15,23 @@ internal fun createScanDetailReducer(): Reducer<ScanDetailState, ScanDetailInten
             errorMessage = null
         )
     }
+
     on<ScanDetailIntent.OnBathymetryLoaded> { state, intent ->
         state.copy(
             isLoading = false,
-            polygons = intent.features,
+            polygons = intent.polygons,
             bbox = intent.bbox,
             errorMessage = null
         )
     }
+
     on<ScanDetailIntent.OnError> { state, intent ->
         state.copy(
             isLoading = false,
             errorMessage = intent.message
         )
     }
+
     on<ScanDetailIntent.OnBackClick> { state, _ ->
         state
     }

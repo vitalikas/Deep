@@ -11,9 +11,9 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.Result
-import lt.vitalijus.feature.scan.domain.BathymetryData
-import lt.vitalijus.feature.scan.domain.Polygon
-import lt.vitalijus.feature.scan.domain.PolygonGeometry
+import lt.vitalijus.feature.scan.domain.model.BathymetryData
+import lt.vitalijus.feature.scan.domain.model.Polygon
+import lt.vitalijus.feature.scan.domain.model.PolygonGeometry
 
 class ScanApiService(
     private val httpClient: HttpClient

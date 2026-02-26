@@ -6,7 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import lt.vitalijus.feature.scan.domain.Polygon
+import lt.vitalijus.feature.scan.domain.model.Polygon
 
 /**
  * iOS implementation of BathymetryMap using MapKit.
@@ -15,7 +15,7 @@ import lt.vitalijus.feature.scan.domain.Polygon
  */
 @Composable
 actual fun BathymetryMap(
-    features: List<Polygon>,
+    polygons: List<Polygon>,
     bbox: List<Double>,
     modifier: Modifier
 ) {

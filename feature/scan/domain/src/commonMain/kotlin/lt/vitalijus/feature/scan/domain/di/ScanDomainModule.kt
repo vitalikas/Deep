@@ -1,7 +1,7 @@
 package lt.vitalijus.feature.scan.domain.di
 
-import lt.vitalijus.feature.scan.domain.GetBathymetryUseCase
-import lt.vitalijus.feature.scan.domain.usecases.GetScansUseCase
+import lt.vitalijus.feature.scan.domain.usecase.GetBathymetryUseCase
+import lt.vitalijus.feature.scan.domain.usecase.GetScansUseCase
 import org.koin.dsl.module
 
 val scanDomainModule = module {

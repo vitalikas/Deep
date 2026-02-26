@@ -1,4 +1,4 @@
-package lt.vitalijus.feature.scan.domain
+package lt.vitalijus.feature.scan.domain.model
 
 /**
  * Bathymetry data model containing GeoJSON feature collection.

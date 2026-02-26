@@ -3,7 +3,7 @@ package lt.vitalijus.feature.scan.presentation.scans
 import lt.vitalijus.core.domain.util.onFailure
 import lt.vitalijus.core.domain.util.onSuccess
 import lt.vitalijus.core.presentation.mvi.Middleware
-import lt.vitalijus.feature.scan.domain.usecases.GetScansUseCase
+import lt.vitalijus.feature.scan.domain.usecase.GetScansUseCase
 
 /**
  * Middleware for handling scan list side effects.

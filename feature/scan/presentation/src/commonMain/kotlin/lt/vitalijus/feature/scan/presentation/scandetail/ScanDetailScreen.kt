@@ -20,7 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import lt.vitalijus.feature.scan.domain.Polygon
+import lt.vitalijus.feature.scan.domain.model.Polygon
 
 /**
  * Scan detail screen with bathymetry map.
@@ -54,14 +54,18 @@ fun ScanDetailScreen(
     // Load scan data on first composition (not on rotation if already loaded)
     LaunchedEffect(scanId) {
         if (state.polygons.isEmpty() && !state.isLoading) {
-            viewModel.dispatch(ScanDetailIntent.LoadScan(scanId, scanName))
+            viewModel.dispatch(
+                intent = ScanDetailIntent.LoadScan(
+                    scanId = scanId,
+                    scanName = scanName
+                )
+            )
         }
     }
 
     ScanDetailContent(
         state = state,
-        onIntent = viewModel::dispatch,
-        onNavigateBack = onNavigateBack
+        onIntent = viewModel::dispatch
     )
 }
 
@@ -69,8 +73,7 @@ fun ScanDetailScreen(
 @Composable
 private fun ScanDetailContent(
     state: ScanDetailState,
-    onIntent: (ScanDetailIntent) -> Unit,
-    onNavigateBack: () -> Unit
+    onIntent: (ScanDetailIntent) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -117,7 +120,7 @@ private fun ScanDetailContent(
 
                 state.polygons.isNotEmpty() -> {
                     BathymetryMap(
-                        features = state.polygons,
+                        polygons = state.polygons,
                         bbox = state.bbox,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -142,13 +145,13 @@ private fun ScanDetailContent(
  * - Android: Uses Google Maps Compose with polygons
  * - iOS: Uses MapKit or Google Maps iOS SDK
  *
- * @param features List of bathymetry features (polygons) to render
+ * @param polygons List of bathymetry features (polygons) to render
  * @param bbox Bounding box [minLat, minLon, maxLat, maxLon]
  * @param modifier Modifier for the composable
  */
 @Composable
 expect fun BathymetryMap(
-    features: List<Polygon>,
+    polygons: List<Polygon>,
     bbox: List<Double>,
     modifier: Modifier = Modifier
 )

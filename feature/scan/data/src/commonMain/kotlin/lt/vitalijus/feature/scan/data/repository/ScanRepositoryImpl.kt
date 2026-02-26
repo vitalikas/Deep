@@ -1,14 +1,13 @@
 package lt.vitalijus.feature.scan.data.repository
 
-import kotlinx.coroutines.flow.first
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.Result
 import lt.vitalijus.feature.auth.domain.AuthRepository
 import lt.vitalijus.feature.scan.data.network.ScanApiService
 import lt.vitalijus.core.database.dao.ScanDao
 import lt.vitalijus.core.database.entity.ScanEntity
-import lt.vitalijus.feature.scan.domain.BathymetryData
-import lt.vitalijus.feature.scan.domain.ScanRepository
+import lt.vitalijus.feature.scan.domain.model.BathymetryData
+import lt.vitalijus.feature.scan.domain.repository.ScanRepository
 import lt.vitalijus.feature.scan.domain.model.Scan
 
 class ScanRepositoryImpl(

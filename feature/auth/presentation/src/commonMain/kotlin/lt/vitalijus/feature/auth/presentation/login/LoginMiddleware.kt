@@ -7,7 +7,7 @@ import lt.vitalijus.core.presentation.mvi.Middleware
 import lt.vitalijus.core.presentation.util.UiText
 import lt.vitalijus.feature.auth.domain.usecases.LoginUseCase
 import lt.vitalijus.feature.auth.presentation.mappers.toScans
-import lt.vitalijus.feature.scan.domain.ScanRepository
+import lt.vitalijus.feature.scan.domain.repository.ScanRepository
 
 /**
  * Middleware for handling login side effects.

@@ -1,7 +1,8 @@
-package lt.vitalijus.feature.scan.domain
+package lt.vitalijus.feature.scan.domain.repository
 
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.Result
+import lt.vitalijus.feature.scan.domain.model.BathymetryData
 import lt.vitalijus.feature.scan.domain.model.Scan
 
 /**
