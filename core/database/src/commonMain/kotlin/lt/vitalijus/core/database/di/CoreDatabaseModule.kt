@@ -2,6 +2,7 @@ package lt.vitalijus.core.database.di
 
 import androidx.room.RoomDatabase
 import lt.vitalijus.core.database.AppDatabase
+import lt.vitalijus.core.database.dao.BathymetryDao
 import lt.vitalijus.core.database.dao.ScanDao
 import lt.vitalijus.core.database.dao.UserDao
 import org.koin.dsl.module
@@ -19,5 +20,9 @@ val coreDatabaseModule = module {
 
     single<ScanDao> {
         get<AppDatabase>().scanDao()
+    }
+
+    single<BathymetryDao> {
+        get<AppDatabase>().bathymetryDao()
     }
 }

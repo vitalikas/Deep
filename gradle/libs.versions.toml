@@ -40,6 +40,7 @@ jetbrains-core-bundle = "1.0.1"
 adaptive = "1.2.0-alpha04"
 kotlinx-coroutines = "1.10.2"
 kotlinx-datetime = "0.6.2"
+kotlinx-serialization = "1.7.3"
 maps-compose = "4.3.3"
 
 # Third party
@@ -53,6 +54,7 @@ kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 
 # AndroidX
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }

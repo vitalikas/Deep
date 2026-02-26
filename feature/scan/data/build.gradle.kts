@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.convention.kmp.library)
     alias(libs.plugins.convention.buildkonfig)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -15,6 +16,7 @@ kotlin {
                 implementation(projects.feature.scan.domain)
                 implementation(projects.feature.auth.domain)
 
+                implementation(libs.kotlinx.serialization.json)
                 implementation(libs.bundles.koin.common)
                 implementation(libs.bundles.ktor.common)
             }
