@@ -9,10 +9,10 @@ enum class DepthColor(
     val hexColor: String
 ) {
 
-    SHALLOW(0.0, 1.0, "#FF0000"),      // 0–1m
-    MEDIUM(1.0, 2.0, "#00FF00"),       // 1–2m
-    DEEP(2.0, 4.0, "#0000FF"),         // 2–4m
-    VERY_DEEP(4.0, null, "#800080");   // >4m
+    SHALLOW(0.0, 1.0, "#8B4513"),      // 0–1m: brown
+    MEDIUM(1.0, 2.0, "#87CEEB"),       // 1–2m: light blue
+    DEEP(2.0, 4.0, "#0000FF"),         // 2–4m: blue
+    VERY_DEEP(4.0, null, "#00008B");   //  >4m: deep blue
 
     companion object {
         fun fromDepth(depth: Double): DepthColor {
