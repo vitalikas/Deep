@@ -7,6 +7,7 @@ import lt.vitalijus.feature.auth.domain.User
 class GetCurrentUserUseCase(
     private val authRepository: AuthRepository
 ) {
+
     operator fun invoke(): Flow<User?> {
         return authRepository.currentUser
     }

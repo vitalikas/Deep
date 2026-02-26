@@ -8,6 +8,7 @@ import lt.vitalijus.feature.auth.domain.LoginResult
 class LoginUseCase(
     private val authRepository: AuthRepository
 ) {
+
     suspend operator fun invoke(
         email: String,
         password: String

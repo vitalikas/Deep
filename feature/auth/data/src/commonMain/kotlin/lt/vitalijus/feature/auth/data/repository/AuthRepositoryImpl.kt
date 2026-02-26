@@ -31,7 +31,7 @@ class AuthRepositoryImpl(
         logger.debug(message = "Attempting login for email: $email")
 
         // Try network login first
-        val networkResult = apiService.login(email, password)
+        val networkResult = apiService.login(email = email, password = password)
 
         return when (networkResult) {
             is Result.Success -> {

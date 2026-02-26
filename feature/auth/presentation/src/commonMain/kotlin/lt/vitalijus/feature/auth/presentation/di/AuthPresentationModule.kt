@@ -11,10 +11,10 @@ import org.koin.dsl.module
 
 val authPresentationModule = module {
     // Middleware registered with explicit generic type
-    factory<Middleware<LoginIntent, LoginState, LoginEffect>> { 
+    factory<Middleware<LoginIntent, LoginState, LoginEffect>> {
         LoginMiddleware(loginUseCase = get())
     }
-    
+
     viewModel {
         LoginViewModel(
             middleware = get()

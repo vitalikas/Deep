@@ -53,8 +53,7 @@ fun LoginScreenRoot(
             when (effect) {
                 is LoginEffect.NavigateToHome -> onLoginSuccess()
                 is LoginEffect.ShowToast -> {
-                    // Show toast via snackbar or other mechanism
-                    // snackbarHostState.showSnackbar(effect.message.asString())
+                    // show toast
                 }
             }
         }
@@ -96,12 +95,16 @@ internal fun LoginScreen(
                 )
             }
 
-            else -> {
+            DeviceConfiguration.MOBILE_PORTRAIT -> {
                 MobilePortraitLoginContent(
                     state = state,
                     onIntent = onIntent,
                     modifier = Modifier.padding(paddingValues)
                 )
+            }
+
+            DeviceConfiguration.DESKTOP -> {
+
             }
         }
     }

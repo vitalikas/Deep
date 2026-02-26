@@ -42,10 +42,9 @@ class LoginMiddleware(
         dispatchIntent: suspend (LoginIntent) -> Unit,
         emitEffect: suspend (LoginEffect) -> Unit
     ) {
-        val trimmedEmail = email.trim()
 
         loginUseCase(
-            email = trimmedEmail,
+            email = email,
             password = password
         )
             .onSuccess {
