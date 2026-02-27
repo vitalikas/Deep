@@ -51,12 +51,9 @@ fun ScanListScreenRoot(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is ScanListEffect.NavigateToScanDetail -> onScanClick(effect.scanId)
-
                 is ScanListEffect.ShowToast -> {
                     // Show toast
                 }
-
-                else -> {}
             }
         }
     }

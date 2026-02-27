@@ -69,7 +69,6 @@ class ScanListMiddleware(
         logoutUseCase()
             .onSuccess {
                 dispatchIntent(ScanListIntent.OnLoggedOut)
-                emitEffect(ScanListEffect.NavigateToLogin)
             }
             .onFailure { error ->
                 dispatchIntent(ScanListIntent.OnError(message = "Logout failed: $error"))
