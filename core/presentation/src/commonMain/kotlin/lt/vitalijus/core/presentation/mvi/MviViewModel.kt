@@ -12,19 +12,19 @@ import kotlinx.coroutines.flow.StateFlow
  * Each ViewModel has its own isolated state, reducer and middleware.
  */
 abstract class MviViewModel<I : UiIntent, S : UiState, E : UiEffect>(
+    initialIntent: I? = null,
     initialState: S,
     reducer: Reducer<S, I>,
-    middleware: Middleware<I, S, E> = Middleware { _, _, _, _ -> }
+    middleware: Middleware<I, S, E> = Middleware { _, _, _, _ -> },
 ) : ViewModel() {
 
     protected val store = object : BaseStore<I, S, E>(
+        initialIntent = initialIntent,
         initialState = initialState,
         reducer = reducer,
         middleware = middleware,
         scope = viewModelScope
-    ) {
-
-    }
+    ) {}
 
     val state: StateFlow<S> = store.state
     val currentState: S get() = store.currentState

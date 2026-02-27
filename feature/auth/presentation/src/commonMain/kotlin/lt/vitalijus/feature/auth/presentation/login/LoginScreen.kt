@@ -42,19 +42,18 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun LoginScreenRoot(
-    viewModel: LoginViewModel = koinViewModel(),
-    onNavigateToScans: () -> Unit = {}
+    viewModel: LoginViewModel = koinViewModel()
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    // Handle effects (navigation, toasts)
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is LoginEffect.Navigate -> onNavigateToScans()
                 is LoginEffect.ShowToast -> {
                     // show toast
                 }
+
+                else -> {}
             }
         }
     }

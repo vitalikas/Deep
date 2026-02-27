@@ -1,55 +1,93 @@
 package lt.vitalijus.deep
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import lt.vitalijus.core.designsystem.theme.DeepTheme
+import lt.vitalijus.deep.app.AppViewModel
 import lt.vitalijus.deep.navigation.Route
 import lt.vitalijus.feature.auth.presentation.login.LoginScreenRoot
 import lt.vitalijus.feature.scan.presentation.scandetail.ScanDetailScreenRoot
 import lt.vitalijus.feature.scan.presentation.scans.ScanListScreenRoot
+import org.koin.compose.koinInject
 
 @Composable
 fun App() {
     DeepTheme {
-        val navController = rememberNavController()
+        val vm: AppViewModel = koinInject()
+        val state by vm.state.collectAsStateWithLifecycle()
 
-        NavHost(
-            navController = navController,
-            startDestination = Route.Login
-        ) {
-            composable<Route.Login> {
-                LoginScreenRoot(
-                    onNavigateToScans = {
-                        navController.navigate(Route.ScanList) {
-                            popUpTo(Route.Login) {
-                                inclusive = true
-                            }
-                        }
-                    }
-                )
-            }
+        when {
+            state.isLoading -> SplashScreen()
+            state.isAuthenticated -> MainNav()
+            else -> AuthNav()
+        }
+    }
+}
 
-            composable<Route.ScanList> {
-                ScanListScreenRoot(
-                    onScanClick = { scanId ->
-                        navController.navigate(Route.ScanDetail(scanId, "Scan #$scanId"))
-                    }
-                )
-            }
+@Composable
+private fun SplashScreen() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
 
-            composable<Route.ScanDetail> { backStackEntry ->
-                val scanDetail = backStackEntry.toRoute<Route.ScanDetail>()
-                ScanDetailScreenRoot(
-                    scanId = scanDetail.scanId,
-                    scanName = scanDetail.scanName,
-                    onNavigateBack = {
-                        navController.popBackStack()
-                    }
-                )
-            }
+@Composable
+private fun AuthNav() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = Route.Login
+    ) {
+        composable<Route.Login> {
+            LoginScreenRoot()
+        }
+    }
+}
+
+@Composable
+private fun MainNav() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = Route.ScanList
+    ) {
+        composable<Route.ScanList> {
+            ScanListScreenRoot(
+                onScanClick = { scanId ->
+                    navController.navigate(
+                        Route.ScanDetail(
+                            scanId = scanId,
+                            scanName = "Scan #$scanId"
+                        )
+                    )
+                }
+            )
+        }
+
+        composable<Route.ScanDetail> { backStackEntry ->
+            val scanDetail = backStackEntry.toRoute<Route.ScanDetail>()
+            ScanDetailScreenRoot(
+                scanId = scanDetail.scanId,
+                scanName = scanDetail.scanName,
+                onNavigateBack = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

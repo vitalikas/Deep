@@ -3,11 +3,11 @@ package lt.vitalijus.feature.auth.data.repository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import lt.vitalijus.core.database.dao.UserDao
 import lt.vitalijus.core.domain.logging.DeepLogger
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.EmptyResult
 import lt.vitalijus.core.domain.util.Result
-import lt.vitalijus.core.database.dao.UserDao
 import lt.vitalijus.feature.auth.data.mappers.toDomain
 import lt.vitalijus.feature.auth.data.mappers.toEntity
 import lt.vitalijus.feature.auth.data.network.AuthApiService
@@ -27,11 +27,17 @@ class AuthRepositoryImpl(
 
     override val isAuthenticated: Flow<Boolean> = tokenManager.isAuthenticated
 
-    override suspend fun login(email: String, password: String): Result<LoginResult, DataError> {
+    override suspend fun login(
+        email: String,
+        password: String
+    ): Result<LoginResult, DataError> {
         logger.debug(message = "Attempting login for email: $email")
 
         // Try network login first
-        val networkResult = apiService.login(email = email, password = password)
+        val networkResult = apiService.login(
+            email = email,
+            password = password
+        )
 
         return when (networkResult) {
             is Result.Success -> {
@@ -39,7 +45,7 @@ class AuthRepositoryImpl(
 
                 if (loginResult != null) {
                     // Save to local database
-                    userDao.insertUser(loginResult.user.toEntity())
+                    userDao.insertUser(user = loginResult.user.toEntity())
                     tokenManager.saveToken(
                         userId = loginResult.user.id,
                         token = loginResult.user.token,
@@ -65,13 +71,9 @@ class AuthRepositoryImpl(
 
     override suspend fun logout(): EmptyResult<DataError.Local> {
         return try {
-            val currentUser = userDao.getCurrentUserSync()
-            currentUser?.let {
-                tokenManager.clearToken(it.id)
-                userDao.logout(it.id)
-            }
-            // Note: caller should clear scans from ScanRepository
-            logger.debug(message = "Logout successful")
+            // Clear all user data including token for security
+            userDao.clearAllUsers()
+            logger.debug(message = "Logout successful - all user data cleared")
             Result.Success(Unit)
         } catch (e: Exception) {
             logger.error(message = "Logout failed", throwable = e)
@@ -85,6 +87,6 @@ class AuthRepositoryImpl(
 
     override suspend fun isTokenValid(): Boolean {
         val currentUser = userDao.getCurrentUser().first()
-        return tokenManager.isTokenValid(currentUser?.validTill)
+        return tokenManager.isTokenValid(validTill = currentUser?.validTill)
     }
 }

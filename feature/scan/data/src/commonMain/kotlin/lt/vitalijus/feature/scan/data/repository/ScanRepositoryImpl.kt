@@ -45,6 +45,11 @@ class ScanRepositoryImpl(
         scanDao.clearAllScans()
     }
 
+    override suspend fun clearAllCache() {
+        scanDao.clearAllScans()
+        bathymetryDao.clearAll()
+    }
+
     override suspend fun getBathymetryData(scanId: Long): Result<BathymetryData, DataError> {
         // 1. Try to get from cache first (offline-first)
         val cached = bathymetryDao.getByScanId(scanId = scanId)
