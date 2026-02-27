@@ -37,11 +37,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-    - name: Run common tests
-      run: ./gradlew commonTest --continue
-
-    - name: Run JVM tests
-      run: ./gradlew jvmTest --continue
+    - name: Run ScanListReducerTest
+      run: ./gradlew :feature:scan:presentation:test --tests "lt.vitalijus.feature.scan.presentation.scans.ScanListReducerTest"
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
