@@ -37,8 +37,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-gradle-
 
-    - name: Run ScanListReducerTest
-      run: ./gradlew :feature:scan:presentation:test --tests "lt.vitalijus.feature.scan.presentation.scans.ScanListReducerTest"
+    - name: Run ScanListReducerTest (Android only)
+      run: ./gradlew :feature:scan:presentation:testDebugUnitTest -Pkotlin.native.ignoreDisabledTargets=true
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
