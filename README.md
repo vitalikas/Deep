@@ -1,35 +1,141 @@
-This is a Kotlin Multiplatform project targeting Android, iOS.
+# Deep
 
-* [/composeApp](./composeApp/src) is for code that will be shared across your Compose Multiplatform applications.
-  It contains several subfolders:
-  - [commonMain](./composeApp/src/commonMain/kotlin) is for code that’s common for all targets.
-  - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
-    For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
-    the [iosMain](./composeApp/src/iosMain/kotlin) folder would be the right place for such calls.
-    Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./composeApp/src/jvmMain/kotlin)
-    folder is the appropriate location.
+Kotlin Multiplatform (KMP) application with Clean Architecture and MVI pattern. Supports Android and iOS platforms.
 
-* [/iosApp](./iosApp/iosApp) contains iOS applications. Even if you’re sharing your UI with Compose Multiplatform,
-  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
+## Architecture
 
-### Build and Run Android Application
+### Modular Structure
 
-To build and run the development version of the Android app, use the run configuration from the run widget
-in your IDE’s toolbar or build it directly from the terminal:
-- on macOS/Linux
-  ```shell
-  ./gradlew :composeApp:assembleDebug
-  ```
-- on Windows
-  ```shell
-  .\gradlew.bat :composeApp:assembleDebug
-  ```
+```
+├── composeApp/              # Shared Compose UI entry point
+├── core/                    # Core modules
+│   ├── presentation/        # MVI base classes, utilities
+│   ├── domain/              # Domain errors, utilities
+│   ├── data/                # Network, logging
+│   ├── database/            # Room database
+│   └── designsystem/        # UI components, theme
+├── feature/                 # Feature modules
+│   ├── auth/                # Authentication (login/logout)
+│   │   ├── presentation/
+│   │   ├── domain/
+│   │   └── data/
+│   └── scan/                # Scan list, bathymetry
+│       ├── presentation/
+│       ├── domain/
+│       └── data/
+└── build-logic/             # Convention plugins
+```
 
-### Build and Run iOS Application
+Each feature follows **Clean Architecture** with three layers:
+- **Presentation** - UI, ViewModels, MVI pattern
+- **Domain** - Use cases, repositories interfaces, models
+- **Data** - Repository implementations, API, local database
 
-To build and run the development version of the iOS app, use the run configuration from the run widget
-in your IDE’s toolbar or open the [/iosApp](./iosApp) directory in Xcode and run it from there.
+### MVI Pattern
 
----
+Custom MVI implementation with:
+- `BaseStore<I, S, E>` - Core store logic (thread-safe, lifecycle-aware)
+- `MviViewModel` - Android ViewModel wrapper
+- `Reducer<S, I>` - Pure state transformations
+- `Middleware<I, S, E>` - Side effects (API calls, navigation)
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+Key features:
+- Type-safe DSL for reducers
+- Optional `initialIntent` for auto-initialization
+- State observation via `StateFlow`
+- Effects via `SharedFlow` (one-time events)
+
+## Authentication Flow
+
+```
+AppViewModel                      AuthMiddleware
+     |                               |
+     |-- CheckAuth (initialIntent) -->
+     |                               |
+     |<-- AuthChecked(isAuth=true) --| (from isAuthenticatedUseCase flow)
+     |                               |
+AuthNav (login)              MainNav (scans)
+     |                               |
+     |                               |
+LoginStore -- Authenticated ------> AppViewModel
+     |                               |
+     |                          ScanListScreen
+     |                               |
+     |<-- Logout (on logout click) --|
+```
+
+- Auth state is **single source of truth** in `AppViewModel`
+- No callbacks between screens - all via state observation
+- Automatic navigation on auth state changes
+- Secure logout clears all cached data + token
+
+## CI/CD
+
+GitHub Actions workflow (`.github/workflows/ci.yml`):
+- Runs on push to `main`, `develop` and PRs
+- Executes `ScanListReducerTest` unit tests
+- Requires `API_KEY` secret in GitHub repository settings
+
+## Configuration
+
+### API Key
+
+API key is injected via **BuildKonfig** at build time:
+
+1. Create `local.properties` in project root:
+```properties
+sdk.dir=/path/to/android/sdk
+API_KEY=your_api_key_here
+```
+
+2. For CI, add `API_KEY` to GitHub Secrets:
+   - Repository → Settings → Secrets and variables → Actions → New repository secret
+
+## Testing
+
+### Unit Tests
+
+Located in `src/commonTest/kotlin`:
+- `ScanListReducerTest` - Reducer state transformations
+
+Run locally:
+```bash
+./gradlew :feature:scan:presentation:testDebugUnitTest
+```
+
+### UI Tests
+
+Located in `src/androidInstrumentedTest/kotlin`:
+- `ScanListScreenTest` - Compose UI tests
+
+Requires Android emulator or device.
+
+## Build & Run
+
+### Android
+
+```bash
+./gradlew :composeApp:assembleDebug
+```
+
+Or use run configuration in Android Studio.
+
+### iOS
+
+Open `/iosApp` in Xcode and run, or use run configuration in Android Studio.
+
+## Security
+
+- Tokens stored in encrypted database (SQLCipher via Room)
+- Automatic cache invalidation on logout
+- API keys excluded from version control via BuildKonfig
+- No sensitive data in composable layer - all auth via ViewModel state
+
+## Tech Stack
+
+- **UI**: Compose Multiplatform, Material3
+- **DI**: Koin
+- **Database**: Room (KMP)
+- **Network**: Ktor (planned)
+- **Navigation**: Compose Navigation with type safety
+- **Build**: Gradle Convention Plugins
