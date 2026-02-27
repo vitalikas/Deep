@@ -1,50 +1,54 @@
 package lt.vitalijus.deep
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import deep.composeapp.generated.resources.Res
-import deep.composeapp.generated.resources.compose_multiplatform
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import lt.vitalijus.core.designsystem.theme.DeepTheme
-import org.jetbrains.compose.resources.painterResource
+import lt.vitalijus.deep.navigation.Route
+import lt.vitalijus.feature.auth.presentation.login.LoginScreenRoot
+import lt.vitalijus.feature.scan.presentation.scandetail.ScanDetailScreenRoot
+import lt.vitalijus.feature.scan.presentation.scans.ScanListScreenRoot
 
 @Composable
 fun App() {
     DeepTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+        val navController = rememberNavController()
+
+        NavHost(
+            navController = navController,
+            startDestination = Route.Login
         ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
+            composable<Route.Login> {
+                LoginScreenRoot(
+                    onNavigateToScans = {
+                        navController.navigate(Route.ScanList) {
+                            popUpTo(Route.Login) {
+                                inclusive = true
+                            }
+                        }
+                    }
+                )
             }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
+
+            composable<Route.ScanList> {
+                ScanListScreenRoot(
+                    onScanClick = { scanId ->
+                        navController.navigate(Route.ScanDetail(scanId, "Scan #$scanId"))
+                    }
+                )
+            }
+
+            composable<Route.ScanDetail> { backStackEntry ->
+                val scanDetail = backStackEntry.toRoute<Route.ScanDetail>()
+                ScanDetailScreenRoot(
+                    scanId = scanDetail.scanId,
+                    scanName = scanDetail.scanName,
+                    onNavigateBack = {
+                        navController.popBackStack()
+                    }
+                )
             }
         }
     }

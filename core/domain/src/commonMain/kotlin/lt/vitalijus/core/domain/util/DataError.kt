@@ -23,4 +23,10 @@ sealed interface DataError : Error {
         NOT_FOUND,
         UNKNOWN
     }
+
+    enum class Validation : DataError {
+        INVALID_EMAIL,
+        INVALID_PASSWORD,
+        EMPTY_FIELDS
+    }
 }

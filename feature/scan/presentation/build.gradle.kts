@@ -12,10 +12,13 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(compose.components.resources)
 
                 implementation(projects.core.domain)
                 implementation(projects.core.designsystem)
+                implementation(projects.core.presentation)
                 implementation(projects.feature.scan.domain)
+                implementation(projects.feature.auth.domain) // For AuthRepository to get scans
             }
         }
 
@@ -24,6 +27,7 @@ kotlin {
                 // Add Android-specific dependencies here. Note that this source set depends on
                 // commonMain by default and will correctly pull the Android artifacts of any KMP
                 // dependencies declared in commonMain.
+                implementation(libs.maps.compose)
             }
         }
 

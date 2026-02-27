@@ -18,6 +18,7 @@ class CmpLibraryConventionPlugin : Plugin<Project> {
                 "commonMainImplementation"(libs.findLibrary("cmp-material3").get())
                 "commonMainImplementation"(libs.findLibrary("cmp-ui").get())
                 "commonMainImplementation"(libs.findLibrary("cmp-material-icons-core").get())
+                "commonMainImplementation"(libs.findLibrary("cmp-material-icons-extended").get())
 
                 "debugImplementation"(libs.findLibrary("cmp-ui-tooling").get())
             }
