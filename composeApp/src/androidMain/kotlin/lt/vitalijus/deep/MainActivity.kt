@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import lt.vitalijus.core.data.di.coreDataModule
 import lt.vitalijus.core.database.di.coreDatabaseModule
+import lt.vitalijus.deep.di.appModule
 import lt.vitalijus.feature.auth.data.di.authDataModule
 import lt.vitalijus.feature.auth.domain.di.authDomainModule
 import lt.vitalijus.feature.auth.presentation.di.authPresentationModule
@@ -36,6 +37,7 @@ class DeepApplication : Application() {
         startKoin {
             androidContext(this@DeepApplication)
             modules(
+                appModule,
                 coreDataModule,
                 coreDatabaseModule,
                 scanDomainModule,

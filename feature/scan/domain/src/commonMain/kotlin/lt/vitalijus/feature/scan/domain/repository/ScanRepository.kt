@@ -29,6 +29,11 @@ interface ScanRepository {
     suspend fun clearScans()
 
     /**
+     * Clear all cached data including scans and bathymetry (e.g., on logout).
+     */
+    suspend fun clearAllCache()
+
+    /**
      * Get bathymetry GeoJSON data for a specific scan.
      *
      * @param scanId The scan ID

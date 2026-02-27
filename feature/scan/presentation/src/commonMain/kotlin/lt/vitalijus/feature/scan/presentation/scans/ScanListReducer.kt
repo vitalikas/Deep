@@ -39,4 +39,19 @@ internal fun createScanListReducer(): Reducer<ScanListState, ScanListIntent> = r
             errorMessage = null
         )
     }
+
+    on<ScanListIntent.OnLogoutClick> { state, _ ->
+        state.copy(
+            isLoading = true,
+            errorMessage = null
+        )
+    }
+
+    on<ScanListIntent.OnLoggedOut> { state, _ ->
+        state.copy(
+            isLoading = false,
+            scans = emptyList(),
+            errorMessage = null
+        )
+    }
 }

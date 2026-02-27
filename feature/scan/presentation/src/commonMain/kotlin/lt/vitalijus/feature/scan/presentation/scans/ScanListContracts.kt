@@ -22,6 +22,8 @@ sealed class ScanListIntent : UiIntent {
     data class OnScanClick(val scanId: Long) : ScanListIntent()
     data object OnRefresh : ScanListIntent()
     data class OnError(val message: String) : ScanListIntent()
+    data object OnLogoutClick : ScanListIntent()
+    data object OnLoggedOut : ScanListIntent()
 }
 
 /**

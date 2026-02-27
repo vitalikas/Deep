@@ -9,7 +9,13 @@ import org.koin.dsl.module
 
 val scanPresentationModule = module {
     // Scan List
-    factory { ScanListMiddleware(getScansUseCase = get()) }
+    factory {
+        ScanListMiddleware(
+            getScansUseCase = get(),
+            logoutUseCase = get(),
+            clearAllCacheUseCase = get()
+        )
+    }
 
     viewModel {
         ScanListViewModel(
