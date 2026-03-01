@@ -2,9 +2,9 @@ package lt.vitalijus.feature.auth.data.network
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import lt.vitalijus.core.database.dao.UserDao
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 interface TokenManager {
     val authToken: Flow<String?>
@@ -43,7 +43,7 @@ class TokenManagerImpl(
             val expiry = Instant.parse(validTill)
             val now = Clock.System.now()
             now < expiry
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             true // If parsing fails, assume valid
         }
     }
