@@ -1,6 +1,21 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.convention.cmp.application)
     alias(libs.plugins.convention.buildkonfig)
+}
+
+android {
+    defaultConfig {
+        val googleMapsApiKey = gradleLocalProperties(
+            rootDir,
+            providers
+        ).getProperty("API_KEY")
+        
+        if (googleMapsApiKey != null) {
+            manifestPlaceholders["API_KEY"] = googleMapsApiKey
+        }
+    }
 }
 
 kotlin {

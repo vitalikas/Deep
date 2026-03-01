@@ -3,6 +3,7 @@
 package lt.vitalijus.core.presentation.mvi
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -41,11 +42,15 @@ abstract class BaseStore<I : UiIntent, S : UiState, E : UiEffect>(
         }
         .stateIn(
             scope = scope,
-            started = SharingStarted.Lazily,
+            started = SharingStarted.WhileSubscribed(stopTimeoutMillis = 5_000L),
             initialValue = initialState
         )
 
-    private val _effect = MutableSharedFlow<E>()
+    private val _effect = MutableSharedFlow<E>(
+        replay = 0,
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST
+    )
     val effect: SharedFlow<E> = _effect.asSharedFlow()
 
     /**
