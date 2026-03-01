@@ -133,9 +133,12 @@ Open `/iosApp` in Xcode and run, or use run configuration in Android Studio.
 
 ## Tech Stack
 
-- **UI**: Compose Multiplatform, Material3
-- **DI**: Koin
-- **Database**: Room (KMP)
-- **Network**: Ktor (planned)
-- **Navigation**: Compose Navigation with type safety
+- **Kotlin**: 2.2.0
+- **UI**: Compose Multiplatform 1.10.1, Material3
+- **DI**: Koin 4.1.1
+- **Database**: Room KMP 2.8.4
+- **Network**: Ktor 3.3.1
+- **Serialization**: kotlinx.serialization 1.9.0
+- **Time**: kotlin.time (Kotlin 2.2.0+)
+- **Navigation**: JetBrains Navigation 2.9.2
 - **Build**: Gradle Convention Plugins
