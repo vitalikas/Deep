@@ -18,12 +18,12 @@ import lt.vitalijus.deep.navigation.Route
 import lt.vitalijus.feature.auth.presentation.login.LoginScreenRoot
 import lt.vitalijus.feature.scan.presentation.scandetail.ScanDetailScreenRoot
 import lt.vitalijus.feature.scan.presentation.scans.ScanListScreenRoot
-import org.koin.compose.koinInject
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun App() {
     DeepTheme {
-        val vm: AppViewModel = koinInject()
+        val vm: AppViewModel = koinViewModel()
         val state by vm.state.collectAsStateWithLifecycle()
 
         when {

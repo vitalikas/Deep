@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package lt.vitalijus.feature.scan.presentation.scans
 
 import androidx.compose.foundation.layout.Arrangement

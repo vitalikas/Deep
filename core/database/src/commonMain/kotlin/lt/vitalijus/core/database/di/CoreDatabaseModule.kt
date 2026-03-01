@@ -2,27 +2,25 @@ package lt.vitalijus.core.database.di
 
 import androidx.room.RoomDatabase
 import lt.vitalijus.core.database.AppDatabase
-import lt.vitalijus.core.database.dao.BathymetryDao
-import lt.vitalijus.core.database.dao.ScanDao
-import lt.vitalijus.core.database.dao.UserDao
 import org.koin.dsl.module
 
+// Platform-specific database builder provider
 expect fun provideAppDatabase(): RoomDatabase.Builder<AppDatabase>
 
 val coreDatabaseModule = module {
-    single {
+    single<AppDatabase> {
         provideAppDatabase().build()
     }
 
-    single<UserDao> {
+    single {
         get<AppDatabase>().userDao()
     }
 
-    single<ScanDao> {
+    single {
         get<AppDatabase>().scanDao()
     }
 
-    single<BathymetryDao> {
+    single {
         get<AppDatabase>().bathymetryDao()
     }
 }
