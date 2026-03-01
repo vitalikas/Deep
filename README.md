@@ -142,3 +142,23 @@ Open `/iosApp` in Xcode and run, or use run configuration in Android Studio.
 - **Time**: kotlin.time (Kotlin 2.2.0+)
 - **Navigation**: JetBrains Navigation 2.9.2
 - **Build**: Gradle Convention Plugins
+
+## Screenshots
+
+### Scan List
+<p align="center">
+  <img src="docs/screenshots/android/bathymetry.png" width="350" alt="Android Scan List"/>
+  <img src="docs/screenshots/ios/login.png" width="350" alt="iOS Scan List"/>
+</p>
+
+### Login
+<p align="center">
+  <img src="docs/screenshots/android/scan_list.png" width="350" alt="Android Login"/>
+  <img src="docs/screenshots/ios/scan_list.png" width="350" alt="iOS Login"/>
+</p>
+
+### Bathymetry
+<p align="center">
+  <img src="docs/screenshots/android/login.png" width="350" alt="Android Bathymetry"/>
+  <img src="docs/screenshots/ios/bathymetry.png" width="350" alt="iOS Bathymetry"/>
+</p>
