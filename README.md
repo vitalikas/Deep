@@ -1,6 +1,7 @@
 # Deep
 
-Kotlin Multiplatform (KMP) application with Clean Architecture and MVI pattern. Supports Android and iOS platforms.
+Kotlin Multiplatform (KMP) application with Clean Architecture and MVI pattern. Supports Android and
+iOS platforms.
 
 ## Architecture
 
@@ -27,6 +28,7 @@ Kotlin Multiplatform (KMP) application with Clean Architecture and MVI pattern. 
 ```
 
 Each feature follows **Clean Architecture** with three layers:
+
 - **Presentation** - UI, ViewModels, MVI pattern
 - **Domain** - Use cases, repositories interfaces, models
 - **Data** - Repository implementations, API, local database
@@ -34,12 +36,14 @@ Each feature follows **Clean Architecture** with three layers:
 ### MVI Pattern
 
 Custom MVI implementation with:
+
 - `BaseStore<I, S, E>` - Core store logic (thread-safe, lifecycle-aware)
 - `MviViewModel` - Android ViewModel wrapper
 - `Reducer<S, I>` - Pure state transformations
 - `Middleware<I, S, E>` - Side effects (API calls, navigation)
 
 Key features:
+
 - Type-safe DSL for reducers
 - Optional `initialIntent` for auto-initialization
 - State observation via `StateFlow`
@@ -72,6 +76,7 @@ LoginStore -- Authenticated ------> AppViewModel
 ## CI/CD
 
 GitHub Actions workflow (`.github/workflows/ci.yml`):
+
 - Runs on push to `main`, `develop` and PRs
 - Executes `ScanListReducerTest` unit tests
 - Requires `API_KEY` secret in GitHub repository settings
@@ -83,22 +88,25 @@ GitHub Actions workflow (`.github/workflows/ci.yml`):
 API key is injected via **BuildKonfig** at build time:
 
 1. Create `local.properties` in project root:
+
 ```properties
 sdk.dir=/path/to/android/sdk
 API_KEY=your_api_key_here
 ```
 
 2. For CI, add `API_KEY` to GitHub Secrets:
-   - Repository → Settings → Secrets and variables → Actions → New repository secret
+    - Repository → Settings → Secrets and variables → Actions → New repository secret
 
 ## Testing
 
 ### Unit Tests
 
 Located in `src/commonTest/kotlin`:
+
 - `ScanListReducerTest` - Reducer state transformations
 
 Run locally:
+
 ```bash
 ./gradlew :feature:scan:presentation:testDebugUnitTest
 ```
@@ -106,6 +114,7 @@ Run locally:
 ### UI Tests
 
 Located in `src/androidInstrumentedTest/kotlin`:
+
 - `ScanListScreenTest` - Compose UI tests
 
 Requires Android emulator or device.
@@ -145,20 +154,23 @@ Open `/iosApp` in Xcode and run, or use run configuration in Android Studio.
 
 ## Screenshots
 
-### Scan List
+### Login
+
 <p align="center">
-  <img src="docs/screenshots/android/bathymetry.png" width="350" alt="Android Scan List"/>
-  <img src="docs/screenshots/ios/login.png" width="350" alt="iOS Scan List"/>
+  <img src="docs/screenshots/android/login.png" width="350" alt="Android Login"/>
+  <img src="docs/screenshots/ios/login.png" width="350" alt="iOS Login"/>
 </p>
 
-### Login
+### Scan List
+
 <p align="center">
-  <img src="docs/screenshots/android/scan_list.png" width="350" alt="Android Login"/>
-  <img src="docs/screenshots/ios/scan_list.png" width="350" alt="iOS Login"/>
+  <img src="docs/screenshots/android/scan_list.png" width="350" alt="Android Scan List"/>
+  <img src="docs/screenshots/ios/scan_list.png" width="350" alt="iOS Scan List"/>
 </p>
 
 ### Bathymetry
+
 <p align="center">
-  <img src="docs/screenshots/android/login.png" width="350" alt="Android Bathymetry"/>
+  <img src="docs/screenshots/android/bathymetry.png" width="350" alt="Android Bathymetry"/>
   <img src="docs/screenshots/ios/bathymetry.png" width="350" alt="iOS Bathymetry"/>
 </p>
