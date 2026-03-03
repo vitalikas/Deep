@@ -83,20 +83,15 @@ private fun MainNav() {
 
         composable<Route.ScanDetail> { backStackEntry ->
             val scanDetail = backStackEntry.toRoute<Route.ScanDetail>()
+
             ScanDetailScreenRoot(
                 scanId = scanDetail.scanId,
                 scanName = scanDetail.scanName,
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
-                onNavigateToTwoPane = { scanId ->
-                    // Navigate back to list with selected scan for two-pane layout
+                onAction = { scanId ->
                     navController.navigate(
                         Route.ScanList(selectedScanId = scanId)
                     ) {
-                        popUpTo<Route.ScanList> {
-                            inclusive = true
-                        }
+                        popUpTo<Route.ScanDetail> { inclusive = true }
                     }
                 }
             )

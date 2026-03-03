@@ -9,22 +9,19 @@ import org.koin.compose.viewmodel.koinViewModel
  * @param scanId The scan ID to display
  * @param scanName The scan name for title
  * @param viewModel The ViewModel - injected by Koin (shared instance)
- * @param onNavigateBack Callback when user navigates back
- * @param onNavigateToTwoPane Callback when navigating to two-pane layout (e.g., on rotation to landscape)
+ * @param onAction Callback when user performs some action (provides scanId)
  */
 @Composable
 fun ScanDetailScreenRoot(
     scanId: Long,
     scanName: String,
     viewModel: ScanDetailViewModel = koinViewModel(),
-    onNavigateBack: () -> Unit,
-    onNavigateToTwoPane: (Long) -> Unit = {}
+    onAction: (Long) -> Unit
 ) {
     ScanDetailScreen(
         scanId = scanId,
         scanName = scanName,
         viewModel = viewModel,
-        onNavigateBack = onNavigateBack,
-        onNavigateToTwoPane = onNavigateToTwoPane
+        onAction = onAction
     )
 }

@@ -30,15 +30,14 @@ import lt.vitalijus.feature.scan.domain.model.Polygon
  * @param scanId The scan ID to display
  * @param scanName The scan name for title
  * @param viewModel The ViewModel
- * @param onNavigateBack Callback when user wants to go back
+ * @param onAction Callback when user wants to go back
  */
 @Composable
 fun ScanDetailScreen(
     scanId: Long,
     scanName: String,
     viewModel: ScanDetailViewModel,
-    onNavigateBack: () -> Unit,
-    onNavigateToTwoPane: (Long) -> Unit = {}
+    onAction: (Long) -> Unit
 ) {
     val scanDetailState by viewModel.state.collectAsStateWithLifecycle()
 
@@ -59,9 +58,9 @@ fun ScanDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is ScanDetailEffect.NavigateBack -> onNavigateBack()
+                is ScanDetailEffect.NavigateBack -> onAction(scanId)
                 is ScanDetailEffect.ShowToast -> {
-                    // Show toast - platform specific or using snackbar
+                    // Show toast
                 }
             }
         }
@@ -70,8 +69,7 @@ fun ScanDetailScreen(
     // Auto-navigate to two-pane layout when rotated to landscape
     LaunchedEffect(deviceConfig) {
         if (deviceConfig != DeviceConfiguration.MOBILE_PORTRAIT) {
-            // Navigate to two-pane layout with selected scan
-            onNavigateToTwoPane(scanId)
+            onAction(scanId)
         }
     }
 
