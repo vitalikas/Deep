@@ -10,7 +10,10 @@ import lt.vitalijus.core.presentation.mvi.UiState
 data class ScanListState(
     val scans: List<ScanUiModel> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val selectedScanId: Long? = null,
+    val portraitScrollPosition: Int = 0,
+    val twoPaneScrollPosition: Int = 0
 ) : UiState
 
 /**
@@ -24,6 +27,9 @@ sealed class ScanListIntent : UiIntent {
     data class OnError(val message: String) : ScanListIntent()
     data object OnLogoutClick : ScanListIntent()
     data object OnLoggedOut : ScanListIntent()
+    data class OnSelectScan(val scanId: Long) : ScanListIntent()
+    data class OnPortraitScrollPositionChange(val position: Int) : ScanListIntent()
+    data class OnTwoPaneScrollPositionChange(val position: Int) : ScanListIntent()
 }
 
 /**

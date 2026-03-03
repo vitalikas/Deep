@@ -54,4 +54,22 @@ internal fun createScanListReducer(): Reducer<ScanListState, ScanListIntent> = r
             errorMessage = null
         )
     }
+
+    on<ScanListIntent.OnSelectScan> { state, intent ->
+        state.copy(
+            selectedScanId = intent.scanId
+        )
+    }
+
+    on<ScanListIntent.OnPortraitScrollPositionChange> { state, intent ->
+        state.copy(
+            portraitScrollPosition = intent.position
+        )
+    }
+
+    on<ScanListIntent.OnTwoPaneScrollPositionChange> { state, intent ->
+        state.copy(
+            twoPaneScrollPosition = intent.position
+        )
+    }
 }

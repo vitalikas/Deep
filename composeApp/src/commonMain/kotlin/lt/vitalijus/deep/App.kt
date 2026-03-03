@@ -64,10 +64,12 @@ private fun MainNav() {
 
     NavHost(
         navController = navController,
-        startDestination = Route.ScanList
+        startDestination = Route.ScanList()
     ) {
-        composable<Route.ScanList> {
+        composable<Route.ScanList> { backStackEntry ->
+            val scanList = backStackEntry.toRoute<Route.ScanList>()
             ScanListScreenRoot(
+                selectedScanId = scanList.selectedScanId,
                 onScanClick = { scanId ->
                     navController.navigate(
                         Route.ScanDetail(
@@ -86,6 +88,16 @@ private fun MainNav() {
                 scanName = scanDetail.scanName,
                 onNavigateBack = {
                     navController.popBackStack()
+                },
+                onNavigateToTwoPane = { scanId ->
+                    // Navigate back to list with selected scan for two-pane layout
+                    navController.navigate(
+                        Route.ScanList(selectedScanId = scanId)
+                    ) {
+                        popUpTo<Route.ScanList> {
+                            inclusive = true
+                        }
+                    }
                 }
             )
         }

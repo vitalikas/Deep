@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import lt.vitalijus.core.presentation.util.DeviceConfiguration
+import lt.vitalijus.core.presentation.util.currentDeviceConfiguration
 import lt.vitalijus.feature.scan.domain.model.Polygon
 
 /**
@@ -35,9 +37,23 @@ fun ScanDetailScreen(
     scanId: Long,
     scanName: String,
     viewModel: ScanDetailViewModel,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    onNavigateToTwoPane: (Long) -> Unit = {}
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val scanDetailState by viewModel.state.collectAsStateWithLifecycle()
+
+    val deviceConfig = currentDeviceConfiguration()
+
+    // Load scan data immediately when scanId changes (or on first composition)
+    LaunchedEffect(scanId) {
+        // Always load data for this scanId
+        viewModel.dispatch(
+            intent = ScanDetailIntent.LoadScan(
+                scanId = scanId,
+                scanName = scanName
+            )
+        )
+    }
 
     // Handle effects (navigation, toasts)
     LaunchedEffect(Unit) {
@@ -51,20 +67,16 @@ fun ScanDetailScreen(
         }
     }
 
-    // Load scan data on first composition (not on rotation if already loaded)
-    LaunchedEffect(scanId) {
-        if (state.polygons.isEmpty() && !state.isLoading) {
-            viewModel.dispatch(
-                intent = ScanDetailIntent.LoadScan(
-                    scanId = scanId,
-                    scanName = scanName
-                )
-            )
+    // Auto-navigate to two-pane layout when rotated to landscape
+    LaunchedEffect(deviceConfig) {
+        if (deviceConfig != DeviceConfiguration.MOBILE_PORTRAIT) {
+            // Navigate to two-pane layout with selected scan
+            onNavigateToTwoPane(scanId)
         }
     }
 
     ScanDetailContent(
-        state = state,
+        scanDetailState = scanDetailState,
         onIntent = viewModel::dispatch
     )
 }
@@ -72,7 +84,7 @@ fun ScanDetailScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ScanDetailContent(
-    state: ScanDetailState,
+    scanDetailState: ScanDetailState,
     onIntent: (ScanDetailIntent) -> Unit
 ) {
     Scaffold(
@@ -80,7 +92,7 @@ private fun ScanDetailContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = state.scanName.ifBlank { "Scan #${state.scanId}" },
+                        text = scanDetailState.scanName.ifBlank { "Scan #${scanDetailState.scanId}" },
                         style = MaterialTheme.typography.titleLarge
                     )
                 },
@@ -101,15 +113,15 @@ private fun ScanDetailContent(
                 .padding(paddingValues)
         ) {
             when {
-                state.isLoading -> {
+                scanDetailState.isLoading -> {
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
 
-                state.errorMessage != null -> {
+                scanDetailState.errorMessage != null -> {
                     Text(
-                        text = state.errorMessage,
+                        text = scanDetailState.errorMessage,
                         modifier = Modifier
                             .align(Alignment.Center)
                             .padding(16.dp),
@@ -118,10 +130,10 @@ private fun ScanDetailContent(
                     )
                 }
 
-                state.polygons.isNotEmpty() -> {
+                scanDetailState.polygons.isNotEmpty() -> {
                     BathymetryMap(
-                        polygons = state.polygons,
-                        bbox = state.bbox,
+                        polygons = scanDetailState.polygons,
+                        bbox = scanDetailState.bbox,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
