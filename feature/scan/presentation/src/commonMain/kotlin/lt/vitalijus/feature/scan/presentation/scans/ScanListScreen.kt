@@ -32,12 +32,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -158,12 +156,8 @@ internal fun ScanListScreen(
                     scans = scanListState.scans,
                     isLoading = scanListState.isLoading,
                     selectedScanId = selectedScanId,
-                    scrollPosition = scanListState.portraitScrollPosition,
                     onScanClick = { scanId ->
                         onScanListIntent(ScanListIntent.OnScanClick(scanId = scanId))
-                    },
-                    onScrollPositionChange = { position ->
-                        onScanListIntent(ScanListIntent.OnPortraitScrollPositionChange(position = position))
                     },
                     modifier = Modifier.padding(paddingValues)
                 )
@@ -174,12 +168,8 @@ internal fun ScanListScreen(
                     scans = scanListState.scans,
                     isLoading = scanListState.isLoading,
                     selectedScanId = selectedScanId,
-                    scrollPosition = scanListState.twoPaneScrollPosition,
                     onScanClick = { scanId ->
                         onScanListIntent(ScanListIntent.OnSelectScan(scanId = scanId))
-                    },
-                    onScrollPositionChange = { position ->
-                        onScanListIntent(ScanListIntent.OnTwoPaneScrollPositionChange(position = position))
                     },
                     scanDetailState = scanDetailState,
                     onNavigateClick = { scanId ->
@@ -202,37 +192,10 @@ private fun OnePaneContent(
     scans: List<ScanUiModel>,
     isLoading: Boolean,
     selectedScanId: Long?,
-    scrollPosition: Int,
     onScanClick: (Long) -> Unit,
-    onScrollPositionChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
-
-    val currentOnScrollChange = rememberUpdatedState(onScrollPositionChange)
-    // Save scroll position when leaving the screen
-    DisposableEffect(listState) {
-        onDispose {
-            currentOnScrollChange.value(listState.firstVisibleItemIndex)
-        }
-    }
-
-    // Restore scroll position when it changes (e.g., after rotation)
-    LaunchedEffect(scrollPosition, scans) {
-        if (scans.isNotEmpty() && listState.firstVisibleItemIndex != scrollPosition) {
-            listState.scrollToItem(scrollPosition)
-        }
-    }
-
-    // Scroll to selected scan when it changes
-    LaunchedEffect(selectedScanId, scans) {
-        if (selectedScanId != null && scans.isNotEmpty()) {
-            val index = scans.indexOfFirst { it.id == selectedScanId }
-            if (index >= 0 && index != listState.firstVisibleItemIndex) {
-                listState.animateScrollToItem(index)
-            }
-        }
-    }
 
     Box(
         modifier = modifier.fillMaxSize(),
@@ -278,9 +241,7 @@ private fun TwoPaneContent(
     scans: List<ScanUiModel>,
     isLoading: Boolean,
     selectedScanId: Long?,
-    scrollPosition: Int,
     onScanClick: (Long) -> Unit,
-    onScrollPositionChange: (Int) -> Unit,
     scanDetailState: ScanDetailState,
     onNavigateClick: (Long) -> Unit,
     isWideScreen: Boolean,
@@ -307,9 +268,7 @@ private fun TwoPaneContent(
                 scans = scans,
                 isLoading = isLoading,
                 selectedScanId = selectedScanId,
-                scrollPosition = scrollPosition,
                 onScanClick = onScanClick,
-                onScrollPositionChange = onScrollPositionChange,
                 modifier = Modifier
                     .fillMaxSize()
             )

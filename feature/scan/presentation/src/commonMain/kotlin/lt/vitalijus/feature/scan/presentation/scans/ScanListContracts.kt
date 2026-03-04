@@ -28,8 +28,6 @@ sealed class ScanListIntent : UiIntent {
     data object OnLogoutClick : ScanListIntent()
     data object OnLoggedOut : ScanListIntent()
     data class OnSelectScan(val scanId: Long) : ScanListIntent()
-    data class OnPortraitScrollPositionChange(val position: Int) : ScanListIntent()
-    data class OnTwoPaneScrollPositionChange(val position: Int) : ScanListIntent()
 }
 
 /**

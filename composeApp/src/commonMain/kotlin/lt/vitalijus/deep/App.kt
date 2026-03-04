@@ -83,17 +83,10 @@ private fun MainNav() {
 
         composable<Route.ScanDetail> { backStackEntry ->
             val scanDetail = backStackEntry.toRoute<Route.ScanDetail>()
-
             ScanDetailScreenRoot(
                 scanId = scanDetail.scanId,
                 scanName = scanDetail.scanName,
-                onAction = { scanId ->
-                    navController.navigate(
-                        Route.ScanList(selectedScanId = scanId)
-                    ) {
-                        popUpTo<Route.ScanDetail> { inclusive = true }
-                    }
-                }
+                onNavigateBack = { navController.popBackStack() }
             )
         }
     }

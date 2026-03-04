@@ -9,19 +9,19 @@ import org.koin.compose.viewmodel.koinViewModel
  * @param scanId The scan ID to display
  * @param scanName The scan name for title
  * @param viewModel The ViewModel - injected by Koin (shared instance)
- * @param onAction Callback when user performs some action (provides scanId)
+ * @param onNavigateBack Callback when user performs some action (provides scanId)
  */
 @Composable
 fun ScanDetailScreenRoot(
     scanId: Long,
     scanName: String,
     viewModel: ScanDetailViewModel = koinViewModel(),
-    onAction: (Long) -> Unit
+    onNavigateBack: () -> Unit
 ) {
     ScanDetailScreen(
         scanId = scanId,
         scanName = scanName,
         viewModel = viewModel,
-        onAction = onAction
+        onNavigateBack = onNavigateBack
     )
 }
