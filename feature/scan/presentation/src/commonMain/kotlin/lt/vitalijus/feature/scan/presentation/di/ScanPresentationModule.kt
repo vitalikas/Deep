@@ -23,10 +23,11 @@ val scanPresentationModule = module {
         )
     }
 
-    // Scan Detail
+    // Scan Detail - Single shared ViewModel instance
     factory { ScanDetailMiddleware(getBathymetryUseCase = get()) }
 
-    viewModel { (scanId: Long, scanName: String) ->
+    // Single ViewModel shared between list and detail screens
+    viewModel {
         ScanDetailViewModel(
             middleware = get()
         )

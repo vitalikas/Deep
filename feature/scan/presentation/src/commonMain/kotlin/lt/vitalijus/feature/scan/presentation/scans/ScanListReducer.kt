@@ -29,8 +29,10 @@ internal fun createScanListReducer(): Reducer<ScanListState, ScanListIntent> = r
         )
     }
 
-    on<ScanListIntent.OnScanClick> { state, _ ->
-        state
+    on<ScanListIntent.OnScanClick> { state, intent ->
+        state.copy(
+            selectedScanId = intent.scanId
+        )
     }
 
     on<ScanListIntent.OnRefresh> { state, _ ->
@@ -52,6 +54,12 @@ internal fun createScanListReducer(): Reducer<ScanListState, ScanListIntent> = r
             isLoading = false,
             scans = emptyList(),
             errorMessage = null
+        )
+    }
+
+    on<ScanListIntent.OnSelectScan> { state, intent ->
+        state.copy(
+            selectedScanId = intent.scanId
         )
     }
 }

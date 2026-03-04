@@ -8,8 +8,11 @@ sealed interface Route {
     data object Login : Route
 
     @Serializable
-    data object ScanList : Route
+    data class ScanList(val selectedScanId: Long? = null) : Route
 
     @Serializable
-    data class ScanDetail(val scanId: Long, val scanName: String) : Route
+    data class ScanDetail(
+        val scanId: Long,
+        val scanName: String
+    ) : Route
 }

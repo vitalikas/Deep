@@ -5,6 +5,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import lt.vitalijus.feature.scan.presentation.scandetail.ScanDetailState
 import org.junit.Rule
 import org.junit.Test
 
@@ -42,16 +43,18 @@ class ScanListScreenTest {
         // When
         composeTestRule.setContent {
             ScanListScreen(
-                state = ScanListState(
+                scanListState = ScanListState(
                     scans = fakeScans,
                     isLoading = false,
                     errorMessage = null
                 ),
-                onIntent = { intent ->
+                scanDetailState = ScanDetailState(),
+                onScanListIntent = { intent ->
                     if (intent is ScanListIntent.OnScanClick) {
                         clickedScanId = intent.scanId
                     }
-                }
+                },
+                onScanDetailIntent = {}
             )
         }
 
@@ -77,12 +80,14 @@ class ScanListScreenTest {
         // When
         composeTestRule.setContent {
             ScanListScreen(
-                state = ScanListState(
+                scanListState = ScanListState(
                     scans = emptyList(),
                     isLoading = true,
                     errorMessage = null
                 ),
-                onIntent = {}
+                scanDetailState = ScanDetailState(),
+                onScanListIntent = {},
+                onScanDetailIntent = {}
             )
         }
 
@@ -97,12 +102,14 @@ class ScanListScreenTest {
         // When
         composeTestRule.setContent {
             ScanListScreen(
-                state = ScanListState(
+                scanListState = ScanListState(
                     scans = emptyList(),
                     isLoading = false,
                     errorMessage = null
                 ),
-                onIntent = {}
+                scanDetailState = ScanDetailState(),
+                onScanListIntent = {},
+                onScanDetailIntent = {}
             )
         }
 
