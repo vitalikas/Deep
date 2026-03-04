@@ -157,20 +157,28 @@ Open `/iosApp` in Xcode and run, or use run configuration in Android Studio.
 ### Login
 
 <p align="center">
-  <img src="docs/screenshots/android/login.png" width="350" alt="Android Login"/>
-  <img src="docs/screenshots/ios/login.png" width="350" alt="iOS Login"/>
+  <img src="docs/screenshots/android/login_1.png" width="350" alt="Android Login"/>
+  <img src="docs/screenshots/android/login_2.png" width="350" alt="Android Login"/>
+  <img src="docs/screenshots/android/login_3.png" width="350" alt="Android Login"/>
+  <img src="docs/screenshots/ios/login_1.png" width="350" alt="iOS Login"/>
+  <img src="docs/screenshots/ios/login_2.png" width="350" alt="iOS Login"/>
+  <img src="docs/screenshots/ios/login_3.png" width="350" alt="iOS Login"/>
 </p>
 
 ### Scan List
 
 <p align="center">
-  <img src="docs/screenshots/android/scan_list.png" width="350" alt="Android Scan List"/>
-  <img src="docs/screenshots/ios/scan_list.png" width="350" alt="iOS Scan List"/>
+  <img src="docs/screenshots/android/scan_list_1.png" width="350" alt="Android Scan List"/>
+  <img src="docs/screenshots/ios/scan_list_1.png" width="350" alt="iOS Scan List"/>
 </p>
 
 ### Bathymetry
 
 <p align="center">
-  <img src="docs/screenshots/android/bathymetry.png" width="350" alt="Android Bathymetry"/>
-  <img src="docs/screenshots/ios/bathymetry.png" width="350" alt="iOS Bathymetry"/>
+  <img src="docs/screenshots/android/bathymetry_1.png" width="350" alt="Android Bathymetry"/>
+  <img src="docs/screenshots/android/bathymetry_2.png" width="350" alt="Android Bathymetry"/>
+  <img src="docs/screenshots/android/bathymetry_3.png" width="350" alt="Android Bathymetry"/>
+  <img src="docs/screenshots/ios/bathymetry_1.png" width="350" alt="iOS Bathymetry"/>
+  <img src="docs/screenshots/ios/bathymetry_2.png" width="350" alt="iOS Bathymetry"/>
+  <img src="docs/screenshots/ios/bathymetry_3.png" width="350" alt="iOS Bathymetry"/>
 </p>
