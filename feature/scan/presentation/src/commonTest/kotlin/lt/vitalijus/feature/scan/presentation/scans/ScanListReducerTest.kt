@@ -85,12 +85,13 @@ class ScanListReducerTest {
     }
 
     @Test
-    fun `OnScanClick intent does not change state`() {
+    fun `OnScanClick intent sets selectedScanId`() {
         // Given
+        val scanId = 1L
         val initialState = ScanListState(
             scans = listOf(
                 ScanUiModel(
-                    id = 1,
+                    id = scanId,
                     name = "Test",
                     date = "2024-01-15",
                     location = "54.0, 25.0",
@@ -98,16 +99,17 @@ class ScanListReducerTest {
                 )
             ),
             isLoading = false,
-            errorMessage = null
+            errorMessage = null,
+            selectedScanId = null
         )
 
         // When
         val newState = reducer.reduce(
-            state = initialState, intent = ScanListIntent.OnScanClick(1L)
+            state = initialState, intent = ScanListIntent.OnScanClick(scanId)
         )
 
         // Then
-        assertEquals(initialState, newState)
+        assertEquals(scanId, newState.selectedScanId)
     }
 
     @Test

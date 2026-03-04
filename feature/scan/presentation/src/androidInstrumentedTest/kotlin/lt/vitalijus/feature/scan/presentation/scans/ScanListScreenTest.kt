@@ -1,11 +1,14 @@
 package lt.vitalijus.feature.scan.presentation.scans
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import lt.vitalijus.feature.scan.presentation.scandetail.ScanDetailState
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 
@@ -17,6 +20,43 @@ class ScanListScreenTest {
 
     @get:Rule
     val composeTestRule = createComposeRule()
+
+    @Test
+    fun scanItem_clickTriggersCallback() {
+        // Given
+        val scan = ScanUiModel(
+            id = 1,
+            name = "Test Scan",
+            date = "2024-01-15",
+            location = "54.0, 25.0",
+            scanPoints = 100
+        )
+        var clicked = false
+
+        // When - test ScanItem directly
+        composeTestRule.setContent {
+            ScanItem(
+                scan = scan,
+                onClick = { clicked = true }
+            )
+        }
+
+        composeTestRule.waitForIdle()
+
+        // Then
+        composeTestRule
+            .onNode(hasText("Test Scan") and hasClickAction())
+            .assertIsDisplayed()
+
+        composeTestRule
+            .onNode(hasText("Test Scan") and hasClickAction())
+            .performClick()
+
+        composeTestRule.waitForIdle()
+
+        // Then
+        assertEquals(true, clicked)
+    }
 
     @Test
     fun scanList_displaysItemsAndClick() {
@@ -50,13 +90,17 @@ class ScanListScreenTest {
                 ),
                 scanDetailState = ScanDetailState(),
                 onScanListIntent = { intent ->
-                    if (intent is ScanListIntent.OnScanClick) {
-                        clickedScanId = intent.scanId
+                    when (intent) {
+                        is ScanListIntent.OnScanClick -> clickedScanId = intent.scanId
+                        is ScanListIntent.OnSelectScan -> clickedScanId = intent.scanId
+                        else -> {}
                     }
                 },
                 onScanDetailIntent = {}
             )
         }
+
+        composeTestRule.waitForIdle()
 
         // Then -> scans should be displayed
         composeTestRule
@@ -68,11 +112,13 @@ class ScanListScreenTest {
             .assertIsDisplayed()
 
         composeTestRule
-            .onNodeWithText("Scan A")
+            .onNode(hasText("Scan A") and hasClickAction())
             .performClick()
 
+        composeTestRule.waitForIdle()
+
         // Then -> click should trigger intent
-        assert(clickedScanId == 1L)
+        assertEquals(1L, clickedScanId)
     }
 
     @Test
