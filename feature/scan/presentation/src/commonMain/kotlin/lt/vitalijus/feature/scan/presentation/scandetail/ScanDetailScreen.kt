@@ -20,9 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import lt.vitalijus.core.domain.model.Polygon
 import lt.vitalijus.core.presentation.util.DeviceConfiguration
 import lt.vitalijus.core.presentation.util.currentDeviceConfiguration
-import lt.vitalijus.feature.scan.domain.model.Polygon
 
 /**
  * Scan detail screen with bathymetry map.

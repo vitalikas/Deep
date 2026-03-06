@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import lt.vitalijus.core.designsystem.theme.DeepTheme
+import lt.vitalijus.deep.app.AppIntent
 import lt.vitalijus.deep.app.AppViewModel
 import lt.vitalijus.deep.navigation.Route
 import lt.vitalijus.feature.auth.presentation.login.LoginScreenRoot
@@ -28,7 +29,11 @@ fun App() {
 
         when {
             state.isLoading -> SplashScreen()
-            state.isAuthenticated -> MainNav()
+            state.isAuthenticated -> MainNav(
+                onLogout = {
+                    vm.dispatch(AppIntent.Logout)
+                }
+            )
             else -> AuthNav()
         }
     }
@@ -59,7 +64,9 @@ private fun AuthNav() {
 }
 
 @Composable
-private fun MainNav() {
+private fun MainNav(
+    onLogout: () -> Unit
+) {
     val navController = rememberNavController()
 
     NavHost(
@@ -77,7 +84,8 @@ private fun MainNav() {
                             scanName = "Scan #$scanId"
                         )
                     )
-                }
+                },
+                onLogout = onLogout
             )
         }
 

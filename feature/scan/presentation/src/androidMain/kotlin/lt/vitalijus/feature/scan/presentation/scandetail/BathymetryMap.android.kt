@@ -10,8 +10,8 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
-import lt.vitalijus.feature.scan.domain.model.Polygon
-import lt.vitalijus.feature.scan.domain.util.DepthColor
+import lt.vitalijus.core.domain.model.Polygon as DomainPolygon
+import lt.vitalijus.feature.scan.presentation.util.DepthColor
 
 /**
  * Android implementation of BathymetryMap using Google Maps Compose.
@@ -20,7 +20,7 @@ import lt.vitalijus.feature.scan.domain.util.DepthColor
  */
 @Composable
 actual fun BathymetryMap(
-    polygons: List<Polygon>,
+    polygons: List<DomainPolygon>,
     bbox: List<Double>,
     modifier: Modifier
 ) {

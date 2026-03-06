@@ -1,10 +1,10 @@
 package lt.vitalijus.feature.auth.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import lt.vitalijus.core.database.dao.UserDao
 import lt.vitalijus.core.domain.logging.DeepLogger
+import lt.vitalijus.core.domain.repository.ScanRepository
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.EmptyResult
 import lt.vitalijus.core.domain.util.Result
@@ -20,6 +20,7 @@ class AuthRepositoryImpl(
     private val apiService: AuthApiService,
     private val userDao: UserDao,
     private val tokenManager: TokenManager,
+    private val scanRepository: ScanRepository,
     private val logger: DeepLogger
 ) : AuthRepository {
 
@@ -33,7 +34,6 @@ class AuthRepositoryImpl(
     ): Result<LoginResult, DataError> {
         logger.debug(message = "Attempting login for email: $email")
 
-        // Try network login first
         val networkResult = apiService.login(
             email = email,
             password = password
@@ -44,19 +44,21 @@ class AuthRepositoryImpl(
                 val loginResult = networkResult.data.toDomain()
 
                 if (loginResult != null) {
-                    // Save to local database
+                    // Save user data
                     userDao.insertUser(user = loginResult.user.toEntity())
+                    // Save token
                     tokenManager.saveToken(
                         userId = loginResult.user.id,
                         token = loginResult.user.token,
                         validTill = loginResult.user.validTill
                     )
-                    // Note: scans are in loginResult.scans, caller should save them to ScanRepository
-                    logger.debug(message = "Login successful for user: ${loginResult.user.id}, loaded ${loginResult.scans.size} scans")
+                    // Save scans
+                    scanRepository.saveScans(scans = loginResult.scans)
+                    logger.debug(message = "Login successful for user: ${loginResult.user.id}, saved ${loginResult.scans.size} scans")
                     Result.Success(loginResult)
                 } else {
-                    logger.error(message = "Login response parsing failed")
-                    Result.Failure(DataError.Remote.SERIALIZATION)
+                    logger.error(message = "Login response missing required fields")
+                    Result.Failure(DataError.Remote.SERVER_ERROR)
                 }
             }
 
@@ -71,7 +73,6 @@ class AuthRepositoryImpl(
 
     override suspend fun logout(): EmptyResult<DataError.Local> {
         return try {
-            // Clear all user data including token for security
             userDao.clearAllUsers()
             logger.debug(message = "Logout successful - all user data cleared")
             Result.Success(Unit)
@@ -79,14 +80,5 @@ class AuthRepositoryImpl(
             logger.error(message = "Logout failed", throwable = e)
             Result.Failure(DataError.Local.UNKNOWN)
         }
-    }
-
-    override suspend fun getCurrentToken(): String? {
-        return tokenManager.getToken()
-    }
-
-    override suspend fun isTokenValid(): Boolean {
-        val currentUser = userDao.getCurrentUser().first()
-        return tokenManager.isTokenValid(validTill = currentUser?.validTill)
     }
 }

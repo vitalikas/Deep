@@ -1,10 +1,10 @@
 package lt.vitalijus.feature.auth.data.mappers
 
 import lt.vitalijus.core.database.entity.UserEntity
+import lt.vitalijus.core.domain.model.Scan
 import lt.vitalijus.feature.auth.data.network.LoginResponseDto
 import lt.vitalijus.feature.auth.data.network.ScanDto
 import lt.vitalijus.feature.auth.domain.LoginResult
-import lt.vitalijus.feature.auth.domain.ScanInfo
 import lt.vitalijus.feature.auth.domain.User
 
 fun LoginResponseDto.toDomain(): LoginResult? {
@@ -29,8 +29,8 @@ fun LoginResponseDto.toDomain(): LoginResult? {
     )
 }
 
-fun ScanDto.toDomain(): ScanInfo {
-    return ScanInfo(
+fun ScanDto.toDomain(): Scan {
+    return Scan(
         id = id,
         lat = lat,
         lon = lon,

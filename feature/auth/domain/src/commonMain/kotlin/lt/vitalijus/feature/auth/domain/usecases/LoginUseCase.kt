@@ -26,7 +26,7 @@ class LoginUseCase(
             return Result.Failure(DataError.Validation.EMPTY_FIELDS)
         }
 
-        if (!isEmailValid(trimmedEmail)) {
+        if (!isEmailValid(email = trimmedEmail)) {
             return Result.Failure(DataError.Validation.INVALID_EMAIL)
         }
 

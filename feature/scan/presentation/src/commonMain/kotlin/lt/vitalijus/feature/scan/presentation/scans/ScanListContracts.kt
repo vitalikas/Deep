@@ -36,6 +36,7 @@ sealed class ScanListIntent : UiIntent {
 sealed class ScanListEffect : UiEffect {
     data class NavigateToScanDetail(val scanId: Long) : ScanListEffect()
     data class ShowToast(val message: String) : ScanListEffect()
+    data object LogoutRequested : ScanListEffect()
 }
 
 /**

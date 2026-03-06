@@ -32,5 +32,8 @@ interface UserDao {
     suspend fun clearAllUsers()
 
     @Query("UPDATE users SET token = :newToken WHERE id = :userId")
-    suspend fun updateToken(userId: Long, newToken: String)
+    suspend fun updateToken(
+        userId: Long,
+        newToken: String
+    )
 }

@@ -45,10 +45,21 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import lt.vitalijus.core.designsystem.icon.DeepIcons
 import lt.vitalijus.core.presentation.util.DeviceConfiguration
 import lt.vitalijus.core.presentation.util.currentDeviceConfiguration
+import lt.vitalijus.feature.scan.presentation.generated.resources.Res
+import lt.vitalijus.feature.scan.presentation.generated.resources.logout
+import lt.vitalijus.feature.scan.presentation.generated.resources.open_full_screen
+import lt.vitalijus.feature.scan.presentation.generated.resources.scan_empty_description
+import lt.vitalijus.feature.scan.presentation.generated.resources.scan_empty_title
+import lt.vitalijus.feature.scan.presentation.generated.resources.scan_list_title
+import lt.vitalijus.feature.scan.presentation.generated.resources.scan_points
+import lt.vitalijus.feature.scan.presentation.generated.resources.scan_points_format
+import lt.vitalijus.feature.scan.presentation.generated.resources.select_scan_hint
+import lt.vitalijus.feature.scan.presentation.generated.resources.view_bathymetry_map
 import lt.vitalijus.feature.scan.presentation.scandetail.BathymetryMap
 import lt.vitalijus.feature.scan.presentation.scandetail.ScanDetailIntent
 import lt.vitalijus.feature.scan.presentation.scandetail.ScanDetailState
 import lt.vitalijus.feature.scan.presentation.scandetail.ScanDetailViewModel
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
 /**
@@ -60,7 +71,8 @@ fun ScanListScreenRoot(
     selectedScanId: Long? = null,
     viewModel: ScanListViewModel = koinViewModel(),
     scanDetailViewModel: ScanDetailViewModel = koinViewModel(),
-    onScanClick: (Long) -> Unit = {}
+    onScanClick: (Long) -> Unit = {},
+    onLogout: () -> Unit = {}
 ) {
     val scanListState by viewModel.state.collectAsStateWithLifecycle()
     val scanDetailState by scanDetailViewModel.state.collectAsStateWithLifecycle()
@@ -79,13 +91,14 @@ fun ScanListScreenRoot(
                 is ScanListEffect.NavigateToScanDetail -> onScanClick(effect.scanId)
                 is ScanListEffect.ShowToast -> { /* Show toast */
                 }
+
+                is ScanListEffect.LogoutRequested -> {
+                    onLogout()
+                }
             }
         }
     }
 
-    // Sync external selectedScanId with ViewModel state ONLY if ViewModel has no selection yet
-    // This happens when coming from ScanDetail navigation (initial state)
-    // If ViewModel already has a selection (e.g., from two-pane), keep it
     LaunchedEffect(selectedScanId) {
         if (scanListState.selectedScanId == null && selectedScanId != null) {
             viewModel.dispatch(ScanListIntent.OnSelectScan(selectedScanId))
@@ -138,12 +151,12 @@ internal fun ScanListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Scans") },
+                title = { Text(stringResource(Res.string.scan_list_title)) },
                 actions = {
                     IconButton(onClick = { onScanListIntent(ScanListIntent.OnLogoutClick) }) {
                         Icon(
                             painter = DeepIcons.logOutIcon,
-                            contentDescription = "Logout"
+                            contentDescription = stringResource(Res.string.logout)
                         )
                     }
                 }
@@ -344,7 +357,7 @@ private fun EmptySelectionView(isWideScreen: Boolean) {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "Select a scan to view details",
+            text = stringResource(Res.string.select_scan_hint),
             style = if (isWideScreen) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -396,7 +409,7 @@ private fun DetailPlaceholder(
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
                     Text(
-                        text = "scan points",
+                        text = stringResource(Res.string.scan_points),
                         style = if (isWideScreen) MaterialTheme.typography.titleMedium else MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f)
                     )
@@ -416,13 +429,13 @@ private fun DetailPlaceholder(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "View Bathymetry Map",
+                        text = stringResource(Res.string.view_bathymetry_map),
                         style = if (isWideScreen) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "Open full screen view",
+                        text = stringResource(Res.string.open_full_screen),
                         style = if (isWideScreen) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f)
                     )
@@ -467,7 +480,7 @@ internal fun ScanItem(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "${scan.scanPoints} points",
+                text = stringResource(Res.string.scan_points_format, scan.scanPoints),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -482,10 +495,13 @@ private fun EmptyScansView() {
         verticalArrangement = Arrangement.Center,
         modifier = Modifier.padding(32.dp)
     ) {
-        Text(text = "No scans yet", style = MaterialTheme.typography.titleMedium)
+        Text(
+            text = stringResource(Res.string.scan_empty_title),
+            style = MaterialTheme.typography.titleMedium
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Your scans will appear here",
+            text = stringResource(Res.string.scan_empty_description),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )

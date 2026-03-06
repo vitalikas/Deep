@@ -7,8 +7,8 @@ import androidx.compose.ui.Modifier
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.cValue
 import kotlinx.cinterop.memScoped
-import lt.vitalijus.feature.scan.domain.model.Polygon
-import lt.vitalijus.feature.scan.domain.util.DepthColor
+import lt.vitalijus.core.domain.model.Polygon
+import lt.vitalijus.feature.scan.presentation.util.DepthColor
 import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.MapKit.MKCoordinateRegionMakeWithDistance
 import platform.MapKit.MKMapView

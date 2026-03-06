@@ -1,4 +1,4 @@
-package lt.vitalijus.feature.scan.domain.util
+package lt.vitalijus.feature.scan.presentation.util
 
 /**
  * Predefined depth colors for bathymetry visualization.

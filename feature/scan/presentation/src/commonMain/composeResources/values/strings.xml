@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <resources>
+    <!-- Scan List -->
     <string name="scan_list_title">Scans</string>
     <string name="scan_empty_title">No scans yet</string>
     <string name="scan_empty_description">Your scans will appear here</string>
     <string name="scan_points">points</string>
+
+    <!-- Scan Item -->
+    <string name="scan_points_format">%1$d points</string>
+
+    <!-- Empty States -->
+    <string name="select_scan_hint">Select a scan to view details</string>
+
+    <!-- Detail Placeholder -->
+    <string name="view_bathymetry_map">View Bathymetry Map</string>
+    <string name="open_full_screen">Open full screen view</string>
+
+    <!-- Actions -->
+    <string name="logout">Logout</string>
+    <string name="loading">Loading</string>
 </resources>
