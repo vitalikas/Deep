@@ -26,7 +26,7 @@ class AuthRepositoryImpl(
 
     override val currentUser: Flow<User?> = userDao.getCurrentUser().map { it?.toDomain() }
 
-    override val isAuthenticated: Flow<Boolean> = tokenManager.isAuthenticated
+    override suspend fun isAuthenticated(): Boolean = tokenManager.isAuthenticated()
 
     override suspend fun login(
         email: String,
@@ -44,12 +44,11 @@ class AuthRepositoryImpl(
                 val loginResult = networkResult.data.toDomain()
 
                 if (loginResult != null) {
-                    // Save user data
+                    // Save user data (without token - token goes to secure storage)
                     userDao.insertUser(user = loginResult.user.toEntity())
-                    // Save token
+                    // Save token securely
                     tokenManager.saveToken(
-                        userId = loginResult.user.id,
-                        token = loginResult.user.token,
+                        token = loginResult.token,
                         validTill = loginResult.user.validTill
                     )
                     // Save scans
@@ -74,7 +73,8 @@ class AuthRepositoryImpl(
     override suspend fun logout(): EmptyResult<DataError.Local> {
         return try {
             userDao.clearAllUsers()
-            logger.debug(message = "Logout successful - all user data cleared")
+            tokenManager.clearToken()
+            logger.debug(message = "Logout successful - all user data and token cleared")
             Result.Success(Unit)
         } catch (e: Exception) {
             logger.error(message = "Logout failed", throwable = e)

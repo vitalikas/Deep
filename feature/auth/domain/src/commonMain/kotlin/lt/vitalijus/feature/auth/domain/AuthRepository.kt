@@ -10,8 +10,8 @@ import lt.vitalijus.core.domain.util.Result
  */
 interface AuthRepository {
     val currentUser: Flow<User?>
-    val isAuthenticated: Flow<Boolean>
 
+    suspend fun isAuthenticated(): Boolean
     suspend fun login(email: String, password: String): Result<LoginResult, DataError>
     suspend fun logout(): EmptyResult<DataError.Local>
 }

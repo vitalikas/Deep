@@ -15,7 +15,6 @@ fun LoginResponseDto.toDomain(): LoginResult? {
         id = loginData.userId,
         email = userDto?.email ?: "",
         name = userDto?.name,
-        token = loginData.token,
         validTill = loginData.validTill,
         registrationDate = loginData.registrationDate,
         isLoggedIn = true
@@ -25,6 +24,7 @@ fun LoginResponseDto.toDomain(): LoginResult? {
 
     return LoginResult(
         user = user,
+        token = loginData.token,
         scans = scans
     )
 }
@@ -46,10 +46,10 @@ fun User.toEntity(): UserEntity {
         id = id,
         email = email,
         name = name,
-        token = token,
         validTill = validTill,
         registrationDate = registrationDate,
         isLoggedIn = isLoggedIn
+        // Note: token is stored in SecureStorage, not in Room
     )
 }
 
@@ -58,7 +58,6 @@ fun UserEntity.toDomain(): User {
         id = id,
         email = email,
         name = name,
-        token = token,
         validTill = validTill,
         registrationDate = registrationDate,
         isLoggedIn = isLoggedIn

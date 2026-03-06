@@ -6,7 +6,6 @@ data class User(
     val id: Long,
     val email: String,
     val name: String? = null,
-    val token: String,
     val validTill: String? = null,
     val registrationDate: String? = null,
     val isLoggedIn: Boolean = true
@@ -14,5 +13,6 @@ data class User(
 
 data class LoginResult(
     val user: User,
+    val token: String,
     val scans: List<Scan>
 )

@@ -21,7 +21,7 @@ import lt.vitalijus.core.database.entity.UserEntity
         ScanEntity::class,
         BathymetryEntity::class
     ],
-    version = 2
+    version = 3
 )
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {

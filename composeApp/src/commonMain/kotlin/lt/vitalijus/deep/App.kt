@@ -25,16 +25,22 @@ import org.koin.compose.viewmodel.koinViewModel
 fun App() {
     DeepTheme {
         val vm: AppViewModel = koinViewModel()
-        val state by vm.state.collectAsStateWithLifecycle()
+        val appState by vm.state.collectAsStateWithLifecycle()
 
         when {
-            state.isLoading -> SplashScreen()
-            state.isAuthenticated -> MainNav(
+            appState.isLoading -> SplashScreen()
+
+            !appState.isAuthenticated -> AuthNav(
+                onLoginSuccess = {
+                    vm.dispatch(AppIntent.AuthChecked(isAuthenticated = true))
+                }
+            )
+
+            appState.isAuthenticated -> MainNav(
                 onLogout = {
                     vm.dispatch(AppIntent.Logout)
                 }
             )
-            else -> AuthNav()
         }
     }
 }
@@ -50,7 +56,9 @@ private fun SplashScreen() {
 }
 
 @Composable
-private fun AuthNav() {
+private fun AuthNav(
+    onLoginSuccess: () -> Unit
+) {
     val navController = rememberNavController()
 
     NavHost(
@@ -58,7 +66,11 @@ private fun AuthNav() {
         startDestination = Route.Login
     ) {
         composable<Route.Login> {
-            LoginScreenRoot()
+            LoginScreenRoot(
+                onLoginSuccess = {
+                    onLoginSuccess()
+                }
+            )
         }
     }
 }

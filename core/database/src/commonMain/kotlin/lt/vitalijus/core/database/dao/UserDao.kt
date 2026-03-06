@@ -22,18 +22,9 @@ interface UserDao {
     @Query("SELECT * FROM users WHERE isLoggedIn = 1 LIMIT 1")
     suspend fun getCurrentUserSync(): UserEntity?
 
-    @Query("SELECT token FROM users WHERE isLoggedIn = 1 LIMIT 1")
-    suspend fun getCurrentToken(): String?
-
     @Query("UPDATE users SET isLoggedIn = 0 WHERE id = :userId")
     suspend fun logout(userId: Long)
 
     @Query("DELETE FROM users")
     suspend fun clearAllUsers()
-
-    @Query("UPDATE users SET token = :newToken WHERE id = :userId")
-    suspend fun updateToken(
-        userId: Long,
-        newToken: String
-    )
 }
