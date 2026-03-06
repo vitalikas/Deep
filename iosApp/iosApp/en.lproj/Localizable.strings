@@ -1,0 +1,24 @@
+/* Auth Error Messages */
+"error_unauthorized" = "Invalid email or password";
+"error_bad_request" = "Invalid request";
+"error_request_timeout" = "Request timed out. Please try again.";
+"error_no_internet" = "No internet connection";
+"error_server_error" = "Server error. Please try again later.";
+"error_forbidden" = "Access forbidden";
+"error_not_found" = "Resource not found";
+"error_conflict" = "Request conflict";
+"error_too_many_requests" = "Too many requests. Please try again later.";
+"error_payload_too_large" = "Request payload too large";
+"error_service_unavailable" = "Service unavailable";
+"error_serialization" = "Failed to parse response";
+"error_unknown" = "An unknown error occurred";
+
+/* Local Error Messages */
+"error_disk_full" = "Storage is full";
+"error_local_not_found" = "Data not found";
+"error_local_unknown" = "A local error occurred";
+
+/* Validation Error Messages */
+"error_invalid_email" = "Invalid email format";
+"error_empty_fields" = "Email and password cannot be empty";
+"error_invalid_password" = "Invalid password";

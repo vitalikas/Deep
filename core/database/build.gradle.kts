@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.convention.kmp.library)
     alias(libs.plugins.convention.room)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -9,6 +10,9 @@ kotlin {
             dependencies {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.bundles.koin.common)
+                implementation(libs.kotlinx.serialization.json)
+
+                implementation(projects.core.domain)
             }
         }
 
@@ -20,7 +24,7 @@ kotlin {
 
         iosMain {
             dependencies {
-                // iOS specific dependencies
+
             }
         }
     }

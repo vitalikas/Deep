@@ -9,21 +9,25 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import lt.vitalijus.core.domain.model.BathymetryData
+import lt.vitalijus.core.domain.model.Polygon
+import lt.vitalijus.core.domain.model.PolygonGeometry
 import lt.vitalijus.core.domain.util.DataError
 import lt.vitalijus.core.domain.util.Result
-import lt.vitalijus.feature.scan.domain.model.BathymetryData
-import lt.vitalijus.feature.scan.domain.model.Polygon
-import lt.vitalijus.feature.scan.domain.model.PolygonGeometry
 
 class ScanApiService(
     private val httpClient: HttpClient
 ) {
+
     companion object {
         private const val BASE_URL = "https://bathus.staging.deeper.eu"
         private const val GEODATA_ENDPOINT = "/api/geoData"
     }
 
-    suspend fun getBathymetry(scanId: Long, token: String): Result<BathymetryData, DataError.Remote> {
+    suspend fun getBathymetry(
+        scanId: Long,
+        token: String
+    ): Result<BathymetryData, DataError.Remote> {
         return try {
             val response = httpClient.get("$BASE_URL$GEODATA_ENDPOINT") {
                 parameter("grid", "FAST")
@@ -59,7 +63,7 @@ class ScanApiService(
             it.jsonPrimitive.content.toDoubleOrNull() ?: 0.0
         } ?: emptyList()
 
-        val features = bathymetryObj["features"]?.jsonArray?.map { featureEl ->
+        val polygons = bathymetryObj["features"]?.jsonArray?.map { featureEl ->
             val feature = featureEl.jsonObject
             val properties = feature["properties"]?.jsonObject
             val geometry = feature["geometry"]?.jsonObject
@@ -93,7 +97,7 @@ class ScanApiService(
         return BathymetryData(
             type = "FeatureCollection",
             bbox = bbox,
-            features = features
+            polygons = polygons
         )
     }
 }

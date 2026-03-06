@@ -1,10 +1,10 @@
 package lt.vitalijus.feature.scan.presentation.scandetail
 
 import androidx.compose.runtime.Immutable
+import lt.vitalijus.core.domain.model.Polygon
 import lt.vitalijus.core.presentation.mvi.UiEffect
 import lt.vitalijus.core.presentation.mvi.UiIntent
 import lt.vitalijus.core.presentation.mvi.UiState
-import lt.vitalijus.feature.scan.domain.model.Polygon
 
 /**
  * Scan detail UI state with MVI pattern.

@@ -3,7 +3,6 @@ package lt.vitalijus.feature.scan.presentation.scans
 import lt.vitalijus.core.domain.util.onFailure
 import lt.vitalijus.core.domain.util.onSuccess
 import lt.vitalijus.core.presentation.mvi.Middleware
-import lt.vitalijus.feature.auth.domain.usecases.LogoutUseCase
 import lt.vitalijus.feature.scan.domain.usecase.ClearAllCacheUseCase
 import lt.vitalijus.feature.scan.domain.usecase.GetScansUseCase
 
@@ -12,7 +11,6 @@ import lt.vitalijus.feature.scan.domain.usecase.GetScansUseCase
  */
 class ScanListMiddleware(
     private val getScansUseCase: GetScansUseCase,
-    private val logoutUseCase: LogoutUseCase,
     private val clearAllCacheUseCase: ClearAllCacheUseCase
 ) : Middleware<ScanListIntent, ScanListState, ScanListEffect> {
 
@@ -35,10 +33,9 @@ class ScanListMiddleware(
             }
 
             is ScanListIntent.OnLogoutClick -> {
-                logout(
-                    dispatchIntent = dispatchIntent,
-                    emitEffect = emitEffect
-                )
+                // Clear cache for security, then emit effect for UI layer to handle auth logout
+                clearAllCacheUseCase()
+                emitEffect(ScanListEffect.LogoutRequested)
             }
 
             else -> {} // OnScansLoaded, OnError, OnLoggedOut are handled by reducer only
@@ -56,23 +53,6 @@ class ScanListMiddleware(
             .onFailure { error ->
                 dispatchIntent(ScanListIntent.OnError(message = "Failed to load scans: $error"))
                 emitEffect(ScanListEffect.ShowToast(message = "Failed to load scans"))
-            }
-    }
-
-    private suspend fun logout(
-        dispatchIntent: suspend (ScanListIntent) -> Unit,
-        emitEffect: suspend (ScanListEffect) -> Unit
-    ) {
-        // First clear all cached data for security
-        clearAllCacheUseCase()
-
-        logoutUseCase()
-            .onSuccess {
-                dispatchIntent(ScanListIntent.OnLoggedOut)
-            }
-            .onFailure { error ->
-                dispatchIntent(ScanListIntent.OnError(message = "Logout failed: $error"))
-                emitEffect(ScanListEffect.ShowToast(message = "Logout failed"))
             }
     }
 }

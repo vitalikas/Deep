@@ -22,7 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import lt.vitalijus.core.presentation.util.DeviceConfiguration
 import lt.vitalijus.core.presentation.util.currentDeviceConfiguration
-import lt.vitalijus.feature.scan.domain.model.Polygon
+import lt.vitalijus.feature.scan.presentation.model.PolygonWrapper
+import lt.vitalijus.feature.scan.presentation.model.toWrapperList
 
 /**
  * Scan detail screen with bathymetry map.
@@ -130,7 +131,7 @@ private fun ScanDetailContent(
 
                 scanDetailState.polygons.isNotEmpty() -> {
                     BathymetryMap(
-                        polygons = scanDetailState.polygons,
+                        polygons = scanDetailState.polygons.toWrapperList(),
                         bbox = scanDetailState.bbox,
                         modifier = Modifier.fillMaxSize()
                     )
@@ -161,7 +162,7 @@ private fun ScanDetailContent(
  */
 @Composable
 expect fun BathymetryMap(
-    polygons: List<Polygon>,
+    polygons: List<PolygonWrapper>,
     bbox: List<Double>,
     modifier: Modifier = Modifier
 )

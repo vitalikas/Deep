@@ -1,5 +1,8 @@
 package lt.vitalijus.feature.scan.presentation.scandetail
 
+import lt.vitalijus.core.domain.model.BathymetryData
+import lt.vitalijus.core.domain.util.DataError
+import lt.vitalijus.core.domain.util.Result
 import lt.vitalijus.core.domain.util.onFailure
 import lt.vitalijus.core.domain.util.onSuccess
 import lt.vitalijus.core.presentation.mvi.Middleware
@@ -40,16 +43,17 @@ class ScanDetailMiddleware(
         dispatchIntent: suspend (ScanDetailIntent) -> Unit,
         emitEffect: suspend (ScanDetailEffect) -> Unit
     ) {
-        getBathymetryUseCase(scanId)
+        val result: Result<BathymetryData, DataError> = getBathymetryUseCase(scanId)
+        result
             .onSuccess { bathymetryData ->
                 dispatchIntent(
                     ScanDetailIntent.OnBathymetryLoaded(
-                        polygons = bathymetryData.features,
+                        polygons = bathymetryData.polygons,
                         bbox = bathymetryData.bbox
                     )
                 )
             }
-            .onFailure { error ->
+            .onFailure { error: DataError ->
                 val message = "Failed to load bathymetry: ${error::class.simpleName}"
                 dispatchIntent(ScanDetailIntent.OnError(message))
                 emitEffect(ScanDetailEffect.ShowToast(message))

@@ -3,6 +3,7 @@ package lt.vitalijus.deep
 import androidx.compose.ui.window.ComposeUIViewController
 import lt.vitalijus.core.data.di.coreDataModule
 import lt.vitalijus.core.database.di.coreDatabaseModule
+import lt.vitalijus.core.security.di.securityModule
 import lt.vitalijus.deep.di.appModule
 import lt.vitalijus.feature.auth.data.di.authDataModule
 import lt.vitalijus.feature.auth.domain.di.authDomainModule
@@ -19,6 +20,7 @@ fun MainViewController() = ComposeUIViewController {
             modules(
                 coreDatabaseModule,
                 coreDataModule,
+                securityModule,
                 authDataModule,
                 authDomainModule,
                 appModule,

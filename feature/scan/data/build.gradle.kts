@@ -9,16 +9,14 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.kotlin.stdlib)
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.bundles.koin.common)
+                implementation(libs.bundles.ktor.common)
 
                 implementation(projects.core.domain)
                 implementation(projects.core.data)
                 implementation(projects.core.database)
                 implementation(projects.feature.scan.domain)
-                implementation(projects.feature.auth.domain)
-
-                implementation(libs.kotlinx.serialization.json)
-                implementation(libs.bundles.koin.common)
-                implementation(libs.bundles.ktor.common)
             }
         }
 

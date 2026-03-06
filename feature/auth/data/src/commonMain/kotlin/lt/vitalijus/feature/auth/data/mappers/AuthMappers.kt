@@ -1,10 +1,10 @@
 package lt.vitalijus.feature.auth.data.mappers
 
 import lt.vitalijus.core.database.entity.UserEntity
+import lt.vitalijus.core.domain.model.Scan
 import lt.vitalijus.feature.auth.data.network.LoginResponseDto
 import lt.vitalijus.feature.auth.data.network.ScanDto
 import lt.vitalijus.feature.auth.domain.LoginResult
-import lt.vitalijus.feature.auth.domain.ScanInfo
 import lt.vitalijus.feature.auth.domain.User
 
 fun LoginResponseDto.toDomain(): LoginResult? {
@@ -15,7 +15,6 @@ fun LoginResponseDto.toDomain(): LoginResult? {
         id = loginData.userId,
         email = userDto?.email ?: "",
         name = userDto?.name,
-        token = loginData.token,
         validTill = loginData.validTill,
         registrationDate = loginData.registrationDate,
         isLoggedIn = true
@@ -25,12 +24,13 @@ fun LoginResponseDto.toDomain(): LoginResult? {
 
     return LoginResult(
         user = user,
+        token = loginData.token,
         scans = scans
     )
 }
 
-fun ScanDto.toDomain(): ScanInfo {
-    return ScanInfo(
+fun ScanDto.toDomain(): Scan {
+    return Scan(
         id = id,
         lat = lat,
         lon = lon,
@@ -46,10 +46,10 @@ fun User.toEntity(): UserEntity {
         id = id,
         email = email,
         name = name,
-        token = token,
         validTill = validTill,
         registrationDate = registrationDate,
         isLoggedIn = isLoggedIn
+        // Note: token is stored in SecureStorage, not in Room
     )
 }
 
@@ -58,7 +58,6 @@ fun UserEntity.toDomain(): User {
         id = id,
         email = email,
         name = name,
-        token = token,
         validTill = validTill,
         registrationDate = registrationDate,
         isLoggedIn = isLoggedIn

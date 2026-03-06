@@ -8,6 +8,7 @@ import lt.vitalijus.core.domain.util.Result
 class AuthApiService(
     private val httpClient: HttpClient
 ) {
+
     companion object {
         private const val LOGIN_ENDPOINT = "/api/login"
     }

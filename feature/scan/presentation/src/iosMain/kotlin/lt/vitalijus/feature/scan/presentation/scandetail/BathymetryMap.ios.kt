@@ -7,8 +7,8 @@ import androidx.compose.ui.Modifier
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.cValue
 import kotlinx.cinterop.memScoped
-import lt.vitalijus.feature.scan.domain.model.Polygon
-import lt.vitalijus.feature.scan.domain.util.DepthColor
+import lt.vitalijus.feature.scan.presentation.model.PolygonWrapper
+import lt.vitalijus.feature.scan.presentation.util.DepthColor
 import platform.CoreLocation.CLLocationCoordinate2DMake
 import platform.MapKit.MKCoordinateRegionMakeWithDistance
 import platform.MapKit.MKMapView
@@ -23,26 +23,29 @@ import platform.MapKit.MKPointAnnotation
 @OptIn(ExperimentalForeignApi::class)
 @Composable
 actual fun BathymetryMap(
-    polygons: List<Polygon>,
+    polygons: List<PolygonWrapper>,
     bbox: List<Double>,
     modifier: Modifier
 ) {
     val centerLat = if (bbox.size >= 4) {
         (bbox[0] + bbox[2]) / 2
     } else {
-        polygons.firstOrNull()?.geometry?.coordinates?.firstOrNull()?.firstOrNull()?.getOrNull(1)
+        polygons.firstOrNull()?.polygon?.geometry?.coordinates?.firstOrNull()?.firstOrNull()
+            ?.getOrNull(1)
             ?: 55.0
     }
     val centerLon = if (bbox.size >= 4) {
         (bbox[1] + bbox[3]) / 2
     } else {
-        polygons.firstOrNull()?.geometry?.coordinates?.firstOrNull()?.firstOrNull()?.getOrNull(0)
+        polygons.firstOrNull()?.polygon?.geometry?.coordinates?.firstOrNull()?.firstOrNull()
+            ?.getOrNull(0)
             ?: 23.0
     }
 
     // Create annotations with depth-based colors
     val annotationsWithColors = remember(polygons) {
-        polygons.mapNotNull { polygon ->
+        polygons.mapNotNull { wrapper ->
+            val polygon = wrapper.polygon
             val firstRing = polygon.geometry.coordinates.firstOrNull()
             val firstCoord = firstRing?.firstOrNull()
             if (firstCoord != null && firstCoord.size >= 2) {

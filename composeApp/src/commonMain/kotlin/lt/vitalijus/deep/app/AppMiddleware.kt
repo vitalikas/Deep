@@ -1,16 +1,15 @@
 package lt.vitalijus.deep.app
 
-import kotlinx.coroutines.flow.collectLatest
 import lt.vitalijus.core.presentation.mvi.Middleware
 import lt.vitalijus.feature.auth.domain.usecases.IsAuthenticatedUseCase
+import lt.vitalijus.feature.auth.domain.usecases.LogoutUseCase
 
 /**
  * Middleware for handling app-level side effects.
- *
- * Observes authentication state changes automatically and updates AppState.
  */
 class AppMiddleware(
-    private val isAuthenticatedUseCase: IsAuthenticatedUseCase
+    private val isAuthenticatedUseCase: IsAuthenticatedUseCase,
+    private val logoutUseCase: LogoutUseCase
 ) : Middleware<AppIntent, AppState, Nothing> {
 
     override suspend fun handle(
@@ -21,12 +20,15 @@ class AppMiddleware(
     ) {
         when (intent) {
             is AppIntent.CheckAuth -> {
-                isAuthenticatedUseCase().collectLatest { isAuthenticated ->
-                    dispatchIntent(AppIntent.AuthChecked(isAuthenticated = isAuthenticated))
-                }
+                val isAuthenticated = isAuthenticatedUseCase()
+                dispatchIntent(AppIntent.AuthChecked(isAuthenticated = isAuthenticated))
             }
 
-            else -> {} // AuthChecked, Logout handled by reducer only
+            is AppIntent.Logout -> {
+                logoutUseCase()
+            }
+
+            else -> {} // AuthChecked handled by reducer only
         }
     }
 }

@@ -1,7 +1,7 @@
-package lt.vitalijus.feature.scan.domain.model
+package lt.vitalijus.core.domain.model
 
 /**
- * Domain model for a scan (batimetric record).
+ * Domain model for a scan.
  */
 data class Scan(
     val id: Long,

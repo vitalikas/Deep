@@ -13,6 +13,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import lt.vitalijus.core.designsystem.theme.DeepTheme
+import lt.vitalijus.deep.app.AppIntent
 import lt.vitalijus.deep.app.AppViewModel
 import lt.vitalijus.deep.navigation.Route
 import lt.vitalijus.feature.auth.presentation.login.LoginScreenRoot
@@ -24,12 +25,22 @@ import org.koin.compose.viewmodel.koinViewModel
 fun App() {
     DeepTheme {
         val vm: AppViewModel = koinViewModel()
-        val state by vm.state.collectAsStateWithLifecycle()
+        val appState by vm.state.collectAsStateWithLifecycle()
 
         when {
-            state.isLoading -> SplashScreen()
-            state.isAuthenticated -> MainNav()
-            else -> AuthNav()
+            appState.isLoading -> SplashScreen()
+
+            !appState.isAuthenticated -> AuthNav(
+                onLoginSuccess = {
+                    vm.dispatch(AppIntent.AuthChecked(isAuthenticated = true))
+                }
+            )
+
+            appState.isAuthenticated -> MainNav(
+                onLogout = {
+                    vm.dispatch(AppIntent.Logout)
+                }
+            )
         }
     }
 }
@@ -45,7 +56,9 @@ private fun SplashScreen() {
 }
 
 @Composable
-private fun AuthNav() {
+private fun AuthNav(
+    onLoginSuccess: () -> Unit
+) {
     val navController = rememberNavController()
 
     NavHost(
@@ -53,13 +66,19 @@ private fun AuthNav() {
         startDestination = Route.Login
     ) {
         composable<Route.Login> {
-            LoginScreenRoot()
+            LoginScreenRoot(
+                onLoginSuccess = {
+                    onLoginSuccess()
+                }
+            )
         }
     }
 }
 
 @Composable
-private fun MainNav() {
+private fun MainNav(
+    onLogout: () -> Unit
+) {
     val navController = rememberNavController()
 
     NavHost(
@@ -77,7 +96,8 @@ private fun MainNav() {
                             scanName = "Scan #$scanId"
                         )
                     )
-                }
+                },
+                onLogout = onLogout
             )
         }
 
