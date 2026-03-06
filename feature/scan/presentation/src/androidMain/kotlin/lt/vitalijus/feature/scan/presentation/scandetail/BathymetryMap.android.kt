@@ -10,7 +10,7 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.Polygon
 import com.google.maps.android.compose.rememberCameraPositionState
-import lt.vitalijus.core.domain.model.Polygon as DomainPolygon
+import lt.vitalijus.feature.scan.presentation.model.PolygonWrapper
 import lt.vitalijus.feature.scan.presentation.util.DepthColor
 
 /**
@@ -20,7 +20,7 @@ import lt.vitalijus.feature.scan.presentation.util.DepthColor
  */
 @Composable
 actual fun BathymetryMap(
-    polygons: List<DomainPolygon>,
+    polygons: List<PolygonWrapper>,
     bbox: List<Double>,
     modifier: Modifier
 ) {
@@ -28,12 +28,14 @@ actual fun BathymetryMap(
     val centerLat = if (bbox.size >= 4) {
         (bbox[0] + bbox[2]) / 2
     } else {
-        polygons.firstOrNull()?.geometry?.coordinates?.firstOrNull()?.firstOrNull()?.get(1) ?: 0.0
+        polygons.firstOrNull()?.polygon?.geometry?.coordinates?.firstOrNull()?.firstOrNull()?.get(1)
+            ?: 0.0
     }
     val centerLon = if (bbox.size >= 4) {
         (bbox[1] + bbox[3]) / 2
     } else {
-        polygons.firstOrNull()?.geometry?.coordinates?.firstOrNull()?.firstOrNull()?.get(0) ?: 0.0
+        polygons.firstOrNull()?.polygon?.geometry?.coordinates?.firstOrNull()?.firstOrNull()?.get(0)
+            ?: 0.0
     }
 
     val cameraPositionState = rememberCameraPositionState {
@@ -47,7 +49,8 @@ actual fun BathymetryMap(
         modifier = modifier.fillMaxSize(),
         cameraPositionState = cameraPositionState
     ) {
-        polygons.forEach { polygon ->
+        polygons.forEach { wrapper ->
+            val polygon = wrapper.polygon
             val color = DepthColor.fromDepth(depth = polygon.depth)
 
             // Convert GeoJSON coordinates to LatLng list

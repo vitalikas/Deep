@@ -55,6 +55,7 @@ import lt.vitalijus.feature.scan.presentation.generated.resources.scan_points
 import lt.vitalijus.feature.scan.presentation.generated.resources.scan_points_format
 import lt.vitalijus.feature.scan.presentation.generated.resources.select_scan_hint
 import lt.vitalijus.feature.scan.presentation.generated.resources.view_bathymetry_map
+import lt.vitalijus.feature.scan.presentation.model.toWrapperList
 import lt.vitalijus.feature.scan.presentation.scandetail.BathymetryMap
 import lt.vitalijus.feature.scan.presentation.scandetail.ScanDetailIntent
 import lt.vitalijus.feature.scan.presentation.scandetail.ScanDetailState
@@ -314,7 +315,7 @@ private fun TwoPaneContent(
 
                 scanDetailState.polygons.isNotEmpty() -> {
                     BathymetryMap(
-                        polygons = scanDetailState.polygons,
+                        polygons = scanDetailState.polygons.toWrapperList(),
                         bbox = scanDetailState.bbox,
                         modifier = Modifier.fillMaxSize()
                     )
