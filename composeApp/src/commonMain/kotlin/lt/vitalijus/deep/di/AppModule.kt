@@ -1,8 +1,8 @@
 package lt.vitalijus.deep.di
 
+import lt.vitalijus.core.security.TokenStorage
 import lt.vitalijus.deep.app.AppMiddleware
 import lt.vitalijus.deep.app.AppViewModel
-import lt.vitalijus.feature.auth.data.auth.AuthStateManager
 import lt.vitalijus.feature.auth.domain.usecases.LogoutUseCase
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
@@ -13,7 +13,7 @@ import org.koin.dsl.module
 val appModule = module {
     factory {
         AppMiddleware(
-            authStateManager = get<AuthStateManager>(),
+            tokenStorage = get<TokenStorage>(),
             logoutUseCase = get<LogoutUseCase>()
         )
     }

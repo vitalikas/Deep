@@ -4,12 +4,14 @@ import lt.vitalijus.core.presentation.mvi.UiIntent
 import lt.vitalijus.core.presentation.mvi.UiState
 
 /**
- * App-level UI state.
+ * App-level UI state represented as sealed interface.
+ * Makes invalid states unrepresentable.
  */
-data class AppState(
-    val isLoading: Boolean = true,
-    val isAuthenticated: Boolean = false
-) : UiState
+sealed interface AppState : UiState {
+    data object Initializing : AppState
+    data object Authenticated : AppState
+    data object Unauthenticated : AppState
+}
 
 /**
  * App-level intents (actions).

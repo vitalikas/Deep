@@ -16,7 +16,7 @@ import lt.vitalijus.core.presentation.mvi.MviViewModel
 class AppViewModel(
     middleware: AppMiddleware
 ) : MviViewModel<AppIntent, AppState, Nothing>(
-    initialState = AppState(),
+    initialState = AppState.Initializing,
     reducer = createAppReducer(),
     middleware = middleware,
     initialIntent = AppIntent.CheckAuth  // Auto-dispatch once on ViewModel creation

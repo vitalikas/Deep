@@ -1,14 +1,15 @@
 package lt.vitalijus.deep.app
 
 import lt.vitalijus.core.presentation.mvi.Middleware
-import lt.vitalijus.feature.auth.data.auth.AuthStateManager
+import lt.vitalijus.core.security.TokenStorage
 import lt.vitalijus.feature.auth.domain.usecases.LogoutUseCase
 
 /**
  * Middleware for handling app-level side effects.
+ * Auth state determined solely by token presence in secure storage.
  */
 class AppMiddleware(
-    private val authStateManager: AuthStateManager,
+    private val tokenStorage: TokenStorage,
     private val logoutUseCase: LogoutUseCase
 ) : Middleware<AppIntent, AppState, Nothing> {
 
@@ -20,8 +21,8 @@ class AppMiddleware(
     ) {
         when (intent) {
             is AppIntent.CheckAuth -> {
-                val isAuthenticated = authStateManager.checkAuthenticated()
-                dispatchIntent(AppIntent.AuthChecked(isAuthenticated = isAuthenticated))
+                val hasToken = tokenStorage.hasToken()
+                dispatchIntent(AppIntent.AuthChecked(isAuthenticated = hasToken))
             }
 
             is AppIntent.Logout -> {

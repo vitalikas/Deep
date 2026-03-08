@@ -7,18 +7,19 @@ import lt.vitalijus.core.presentation.mvi.reducer
  * Pure reducer for App-level state transformations.
  */
 internal fun createAppReducer(): Reducer<AppState, AppIntent> = reducer {
-    on<AppIntent.CheckAuth> { state, _ ->
-        state.copy(isLoading = true)
+    on<AppIntent.CheckAuth> { _, _ ->
+        AppState.Initializing
     }
 
-    on<AppIntent.AuthChecked> { state, intent ->
-        state.copy(
-            isLoading = false,
-            isAuthenticated = intent.isAuthenticated
-        )
+    on<AppIntent.AuthChecked> { _, intent ->
+        if (intent.isAuthenticated) {
+            AppState.Authenticated
+        } else {
+            AppState.Unauthenticated
+        }
     }
 
-    on<AppIntent.Logout> { state, _ ->
-        state.copy(isAuthenticated = false)
+    on<AppIntent.Logout> { _, _ ->
+        AppState.Unauthenticated
     }
 }
