@@ -11,9 +11,10 @@ iOS platforms.
 ├── composeApp/              # Shared Compose UI entry point
 ├── core/                    # Core modules
 │   ├── presentation/        # MVI base classes, utilities
-│   ├── domain/              # Domain errors, utilities
+│   ├── domain/              # Domain errors, utilities, Result<T, Error>
 │   ├── data/                # Network, logging
 │   ├── database/            # Room database
+│   ├── security/           # Token storage (Keystore/Keychain)
 │   └── designsystem/        # UI components, theme
 ├── feature/                 # Feature modules
 │   ├── auth/                # Authentication (login/logout)
@@ -48,30 +49,141 @@ Key features:
 - Optional `initialIntent` for auto-initialization
 - State observation via `StateFlow`
 - Effects via `SharedFlow` (one-time events)
+- **Sealed interface states** - invalid states are unrepresentable
+
+### Result<T, Error> Pattern
+
+Type-safe error handling across all layers:
+
+```kotlin
+sealed interface Result<out D, out E : Error> {
+    data class Success<out D>(val data: D) : Result<D, Nothing>
+    data class Failure<out E : Error>(val error: E) : Result<Nothing, E>
+}
+```
+
+- All storage operations return `Result<T, StorageError>`
+- All API operations return `Result<T, DataError.Remote>`
+- Transformations via `map()`, `onSuccess()`, `onFailure()`
+
+## Security Architecture
+
+### Token Storage (`core:security`)
+
+Platform-specific secure storage implementation:
+
+```
+┌─────────────────────────────────────┐
+│         TokenStorage                │
+│  (interface - pure abstraction)     │
+├─────────────────────────────────────┤
+│  • hasToken(): Result<Boolean>      │
+│  • saveToken(): Result<Unit>        │
+│  • getToken(): Result<String>       │
+│  • clearToken(): Result<Unit>       │
+└─────────────────────────────────────┘
+              ↓ implements
+┌─────────────────────────────────────┐
+│    AndroidTokenStorage              │
+│    • AES-256/GCM encryption         │
+│    • Android Keystore key management│
+└─────────────────────────────────────┘
+              
+┌─────────────────────────────────────┐
+│    IOSTokenStorage                  │
+│    • Keychain Services              │
+│    • kSecAttrAccessibleWhenUnlocked │
+└─────────────────────────────────────┘
+```
+
+### Error Hierarchy
+
+```kotlin
+// Storage layer (core:security)
+sealed interface StorageError : Error {
+    object NotFound
+    class EncryptionFailed(cause: Throwable)
+    class DecryptionFailed(cause: Throwable)
+    class IOError(cause: Throwable)
+}
+
+// Domain layer (core:domain)
+sealed interface DataError : Error {
+    sealed interface Remote : DataError
+    sealed interface Local : DataError
+    sealed interface Validation : DataError
+}
+```
 
 ## Authentication Flow
 
-```
-AppViewModel                      AuthMiddleware
-     |                               |
-     |-- CheckAuth (initialIntent) -->
-     |                               |
-     |<-- AuthChecked(isAuth=true) --| (from isAuthenticatedUseCase flow)
-     |                               |
-AuthNav (login)              MainNav (scans)
-     |                               |
-     |                               |
-LoginStore -- Authenticated ------> AppViewModel
-     |                               |
-     |                          ScanListScreen
-     |                               |
-     |<-- Logout (on logout click) --|
+### App-Level State Management
+
+```kotlin
+// Sealed interface - invalid states are unrepresentable
+sealed interface AppState : UiState {
+    data object Initializing : AppState      // Checking auth
+    data object Authenticated : AppState    // Token exists
+    data object Unauthenticated : AppState    // No token
+}
 ```
 
-- Auth state is **single source of truth** in `AppViewModel`
-- No callbacks between screens - all via state observation
-- Automatic navigation on auth state changes
-- Secure logout clears all cached data + token
+### Auth Flow Diagram
+
+```
+App Start
+   │
+   ▼
+AppState.Initializing ───► SplashScreen
+   │
+   │ LaunchedEffect(CheckAuth)
+   ▼
+AppMiddleware ───► TokenStorage.hasToken()
+   │
+   ├─► Success(true) ───► AuthState.Authenticated ───► MainNav
+   │
+   └─► Success(false) ───► AuthState.Unauthenticated ───► AuthNav
+   │
+   └─► Failure ───► AuthState.Unauthenticated (safe fallback)
+
+Login Flow:
+   │
+   ▼
+LoginScreen ───► LoginUseCase
+   │
+   ▼
+AuthRepository.login()
+   │
+   ├─► 1. Save user to DB
+   ├─► 2. Save token via TokenStorage
+   │   └─► Failure? Rollback user (atomic operation)
+   │
+   └─► 3. Save scans
+   │
+   ▼
+LoginEffect.Navigate ───► AppViewModel ───► AppState.Authenticated
+
+Logout Flow:
+   │
+   ▼
+MainNav ───► LogoutUseCase
+   │
+   ▼
+AuthRepository.logout()
+   │
+   ├─► 1. Clear users from DB
+   ├─► 2. Clear token from TokenStorage
+   │
+   ▼
+AppState.Unauthenticated ───► AuthNav
+```
+
+### Key Principles
+
+1. **Single source of truth** - Token existence determines auth state
+2. **Atomic operations** - Login is all-or-nothing (rollback on failure)
+3. **Safe fallbacks** - Any error = unauthenticated state
+4. **No callbacks** - Navigation via state observation only
 
 ## CI/CD
 
@@ -135,10 +247,13 @@ Open `/iosApp` in Xcode and run, or use run configuration in Android Studio.
 
 ## Security
 
-- Tokens stored in encrypted database (SQLCipher via Room)
-- Automatic cache invalidation on logout
-- API keys excluded from version control via BuildKonfig
-- No sensitive data in composable layer - all auth via ViewModel state
+- **Tokens**: AES-256/GCM encryption (Android) / Keychain (iOS)
+- **Keystore**: Hardware-backed when available
+- **Keychain**: `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`
+- **Rollback**: Atomic login with user cleanup on token storage failure
+- **Logout**: Clears all user data + secure token
+- **API keys**: Excluded from version control via BuildKonfig
+- **Error handling**: Type-safe Result<T, Error> - no silent failures
 
 ## Tech Stack
 
@@ -147,6 +262,7 @@ Open `/iosApp` in Xcode and run, or use run configuration in Android Studio.
 - **DI**: Koin 4.1.1
 - **Database**: Room KMP 2.8.4
 - **Network**: Ktor 3.3.1
+- **Security**: Android Keystore, iOS Keychain, AES-256/GCM
 - **Serialization**: kotlinx.serialization 1.9.0
 - **Time**: kotlin.time (Kotlin 2.2.0+)
 - **Navigation**: JetBrains Navigation 2.9.2
