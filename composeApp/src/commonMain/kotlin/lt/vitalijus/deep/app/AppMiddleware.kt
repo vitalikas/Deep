@@ -1,14 +1,14 @@
 package lt.vitalijus.deep.app
 
 import lt.vitalijus.core.presentation.mvi.Middleware
-import lt.vitalijus.feature.auth.domain.usecases.IsAuthenticatedUseCase
+import lt.vitalijus.feature.auth.data.auth.AuthStateManager
 import lt.vitalijus.feature.auth.domain.usecases.LogoutUseCase
 
 /**
  * Middleware for handling app-level side effects.
  */
 class AppMiddleware(
-    private val isAuthenticatedUseCase: IsAuthenticatedUseCase,
+    private val authStateManager: AuthStateManager,
     private val logoutUseCase: LogoutUseCase
 ) : Middleware<AppIntent, AppState, Nothing> {
 
@@ -20,7 +20,7 @@ class AppMiddleware(
     ) {
         when (intent) {
             is AppIntent.CheckAuth -> {
-                val isAuthenticated = isAuthenticatedUseCase()
+                val isAuthenticated = authStateManager.checkAuthenticated()
                 dispatchIntent(AppIntent.AuthChecked(isAuthenticated = isAuthenticated))
             }
 

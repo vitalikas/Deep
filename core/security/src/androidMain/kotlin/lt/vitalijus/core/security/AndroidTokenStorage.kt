@@ -10,6 +10,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import co.touchlab.kermit.Logger
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.security.KeyStore
@@ -19,30 +21,29 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 /**
- * Android implementation of SecureStorage using:
+ * Android implementation of TokenStorage using:
  * - DataStore for persistent storage
  * - Android Keystore for key management
  * - AES/GCM/NoPadding for encryption
+ * - StateFlow for reactive token updates
  */
-class AndroidSecureStorage(
-    private val context: Context,
+class AndroidTokenStorage(
+    context: Context,
     private val logger: Logger
-) : SecureStorage {
+) : TokenStorage {
 
     private val dataStore: DataStore<Preferences> = context.dataStore
-    private val tokenKey = stringPreferencesKey(KEY_TOKEN)
+    private val dataStoreTokenKey = stringPreferencesKey(KEY_TOKEN)
     private val cipher: Cipher = Cipher.getInstance(TRANSFORMATION)
 
+    private val _tokenFlow = MutableStateFlow<String?>(null)
+    override val tokenFlow: StateFlow<String?> = _tokenFlow
+
     companion object {
-        // DataStore
         private const val STORAGE_NAME = "secure_storage"
         private const val KEY_TOKEN = "auth_token"
-
-        // KeyStore
         private const val ANDROID_KEYSTORE = "AndroidKeyStore"
         private const val KEYSTORE_ALIAS = "deep_auth_token_key"
-
-        // Cipher
         private const val TRANSFORMATION = "AES/GCM/NoPadding"
         private const val GCM_TAG_LENGTH = 128
         private const val GCM_IV_LENGTH = 12
@@ -61,8 +62,10 @@ class AndroidSecureStorage(
             val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
 
             if (!keyStore.containsAlias(KEYSTORE_ALIAS)) {
-                val keyGenerator =
-                    KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEYSTORE)
+                val keyGenerator = KeyGenerator.getInstance(
+                    KeyProperties.KEY_ALGORITHM_AES,
+                    ANDROID_KEYSTORE
+                )
 
                 keyGenerator.init(
                     KeyGenParameterSpec.Builder(
@@ -92,11 +95,12 @@ class AndroidSecureStorage(
 
     private fun encrypt(plaintext: String): String {
         return try {
-            cipher.init(Cipher.ENCRYPT_MODE, getSecretKey())
+            val secretKey = getSecretKey()
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+
             val iv = cipher.iv
             val encrypted = cipher.doFinal(plaintext.toByteArray(Charsets.UTF_8))
 
-            // Combine IV + encrypted data and encode to Base64
             val combined = ByteArray(iv.size + encrypted.size)
             System.arraycopy(iv, 0, combined, 0, iv.size)
             System.arraycopy(encrypted, 0, combined, iv.size, encrypted.size)
@@ -112,13 +116,13 @@ class AndroidSecureStorage(
         return try {
             val combined = Base64.decode(ciphertext, Base64.NO_WRAP)
 
-            // Extract IV (first 12 bytes for GCM)
             val iv = ByteArray(GCM_IV_LENGTH)
             val encrypted = ByteArray(combined.size - GCM_IV_LENGTH)
             System.arraycopy(combined, 0, iv, 0, GCM_IV_LENGTH)
             System.arraycopy(combined, GCM_IV_LENGTH, encrypted, 0, encrypted.size)
 
-            cipher.init(Cipher.DECRYPT_MODE, getSecretKey(), GCMParameterSpec(GCM_TAG_LENGTH, iv))
+            val secretKey = getSecretKey()
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(GCM_TAG_LENGTH, iv))
             String(cipher.doFinal(encrypted), Charsets.UTF_8)
         } catch (e: Exception) {
             logger.e(e) { "Decryption failed" }
@@ -126,12 +130,26 @@ class AndroidSecureStorage(
         }
     }
 
+    override suspend fun hasToken(): Boolean {
+        return try {
+            dataStore.data
+                .map { preferences ->
+                    preferences.contains(dataStoreTokenKey)
+                }
+                .first()
+        } catch (e: Exception) {
+            logger.e(e) { "Failed to check token existence" }
+            false
+        }
+    }
+
     override suspend fun saveToken(token: String) {
         try {
             val encrypted = encrypt(token)
             dataStore.edit { preferences ->
-                preferences[tokenKey] = encrypted
+                preferences[dataStoreTokenKey] = encrypted
             }
+            _tokenFlow.value = token
             logger.i { "Token saved securely" }
         } catch (e: SecureStorageException) {
             throw e
@@ -144,9 +162,12 @@ class AndroidSecureStorage(
     override suspend fun getToken(): String? {
         return try {
             dataStore.data
-                .map { preferences -> preferences[tokenKey] }
+                .map { preferences ->
+                    preferences[dataStoreTokenKey]
+                }
                 .first()
                 ?.let { decrypt(it) }
+                .also { _tokenFlow.value = it }
         } catch (e: SecureStorageException) {
             throw e
         } catch (e: Exception) {
@@ -158,23 +179,13 @@ class AndroidSecureStorage(
     override suspend fun clearToken() {
         try {
             dataStore.edit { preferences ->
-                preferences.remove(tokenKey)
+                preferences.remove(dataStoreTokenKey)
             }
+            _tokenFlow.value = null
             logger.i { "Token cleared from secure storage" }
         } catch (e: Exception) {
             logger.e(e) { "Failed to clear token" }
             throw SecureStorageException("Failed to clear token", e)
-        }
-    }
-
-    override suspend fun hasToken(): Boolean {
-        return try {
-            dataStore.data
-                .map { preferences -> preferences.contains(tokenKey) }
-                .first()
-        } catch (e: Exception) {
-            logger.e(e) { "Failed to check token existence" }
-            false
         }
     }
 }
