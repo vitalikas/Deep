@@ -1,5 +1,6 @@
 package lt.vitalijus.deep.app
 
+import lt.vitalijus.core.domain.util.Result
 import lt.vitalijus.core.presentation.mvi.Middleware
 import lt.vitalijus.core.security.TokenStorage
 import lt.vitalijus.feature.auth.domain.usecases.LogoutUseCase
@@ -21,8 +22,16 @@ class AppMiddleware(
     ) {
         when (intent) {
             is AppIntent.CheckAuth -> {
-                val hasToken = tokenStorage.hasToken()
-                dispatchIntent(AppIntent.AuthChecked(isAuthenticated = hasToken))
+                when (val hasTokenResult = tokenStorage.hasToken()) {
+                    is Result.Success -> {
+                        dispatchIntent(AppIntent.AuthChecked(isAuthenticated = hasTokenResult.data))
+                    }
+
+                    is Result.Failure -> {
+                        // Log error but treat as unauthenticated for safety
+                        dispatchIntent(AppIntent.AuthChecked(isAuthenticated = false))
+                    }
+                }
             }
 
             is AppIntent.Logout -> {

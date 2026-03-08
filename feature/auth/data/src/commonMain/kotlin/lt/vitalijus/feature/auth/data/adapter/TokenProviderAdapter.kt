@@ -3,6 +3,7 @@ package lt.vitalijus.feature.auth.data.adapter
 import kotlinx.coroutines.flow.first
 import lt.vitalijus.core.database.dao.UserDao
 import lt.vitalijus.core.domain.auth.TokenProvider
+import lt.vitalijus.core.domain.util.Result
 import lt.vitalijus.core.security.TokenStorage
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -17,7 +18,10 @@ class TokenProviderAdapter(
 ) : TokenProvider {
 
     override suspend fun getToken(): String? {
-        return tokenStorage.getToken()
+        return when (val result = tokenStorage.getToken()) {
+            is Result.Success -> result.data
+            is Result.Failure -> null
+        }
     }
 
     override suspend fun isTokenValid(): Boolean {

@@ -40,11 +40,21 @@ class AuthRepositoryImpl(
                     // Save user data (without token - token goes to secure storage)
                     userDao.insertUser(user = loginResult.user.toEntity())
                     // Save token securely
-                    tokenStorage.saveToken(token = loginResult.token)
-                    // Save scans
-                    scanRepository.saveScans(scans = loginResult.scans)
-                    logger.debug(message = "Login successful for user: ${loginResult.user.id}, saved ${loginResult.scans.size} scans")
-                    Result.Success(loginResult)
+                    when (val tokenResult = tokenStorage.saveToken(token = loginResult.token)) {
+                        is Result.Success -> {
+                            // Save scans
+                            scanRepository.saveScans(scans = loginResult.scans)
+                            logger.debug(message = "Login successful for user: ${loginResult.user.id}, saved ${loginResult.scans.size} scans")
+                            Result.Success(loginResult)
+                        }
+
+                        is Result.Failure -> {
+                            // Rollback: delete user since token storage failed
+                            userDao.clearAllUsers()
+                            logger.error(message = "Failed to save token, rolled back user: ${tokenResult.error}")
+                            Result.Failure(DataError.Local.UNKNOWN)
+                        }
+                    }
                 } else {
                     logger.error(message = "Login response missing required fields")
                     Result.Failure(DataError.Remote.SERVER_ERROR)
@@ -63,9 +73,17 @@ class AuthRepositoryImpl(
     override suspend fun logout(): EmptyResult<DataError.Local> {
         return try {
             userDao.clearAllUsers()
-            tokenStorage.clearToken()
-            logger.debug(message = "Logout successful - all user data and token cleared")
-            Result.Success(Unit)
+            when (val clearResult = tokenStorage.clearToken()) {
+                is Result.Success -> {
+                    logger.debug(message = "Logout successful - all user data and token cleared")
+                    Result.Success(Unit)
+                }
+
+                is Result.Failure -> {
+                    logger.error(message = "Failed to clear token: ${clearResult.error}")
+                    Result.Failure(DataError.Local.UNKNOWN)
+                }
+            }
         } catch (e: Exception) {
             logger.error(message = "Logout failed", throwable = e)
             Result.Failure(DataError.Local.UNKNOWN)

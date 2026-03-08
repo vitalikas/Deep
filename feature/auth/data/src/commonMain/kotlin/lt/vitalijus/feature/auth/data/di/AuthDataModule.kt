@@ -7,8 +7,6 @@ import lt.vitalijus.core.domain.logging.DeepLogger
 import lt.vitalijus.core.domain.repository.ScanRepository
 import lt.vitalijus.core.security.TokenStorage
 import lt.vitalijus.feature.auth.data.adapter.TokenProviderAdapter
-import lt.vitalijus.feature.auth.data.auth.AuthStateManager
-import lt.vitalijus.feature.auth.data.auth.AuthStateManagerImpl
 import lt.vitalijus.feature.auth.data.network.AuthApiService
 import lt.vitalijus.feature.auth.data.repository.AuthRepositoryImpl
 import lt.vitalijus.feature.auth.domain.AuthRepository
@@ -19,14 +17,6 @@ val authDataModule = module {
     single {
         AuthApiService(
             httpClient = get<HttpClientFactory>().create(engine = get())
-        )
-    }
-
-    // Auth State Manager (combines TokenStorage + UserDao)
-    single<AuthStateManager> {
-        AuthStateManagerImpl(
-            tokenStorage = get<TokenStorage>(),
-            userDao = get<UserDao>()
         )
     }
 

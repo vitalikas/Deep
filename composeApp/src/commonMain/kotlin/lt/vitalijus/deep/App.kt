@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,11 +28,6 @@ fun App() {
         val vm: AppViewModel = koinViewModel()
         val appState by vm.state.collectAsStateWithLifecycle()
 
-        // Check auth status on app start
-//        LaunchedEffect(Unit) {
-//            vm.dispatch(AppIntent.CheckAuth)
-//        }
-
         when (appState) {
             is AppState.Initializing -> SplashScreen()
             is AppState.Unauthenticated -> AuthNav(
@@ -41,6 +35,7 @@ fun App() {
                     vm.dispatch(AppIntent.AuthChecked(isAuthenticated = true))
                 }
             )
+
             is AppState.Authenticated -> MainNav(
                 onLogout = {
                     vm.dispatch(AppIntent.Logout)

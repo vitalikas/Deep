@@ -7,8 +7,7 @@ import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.convert
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.usePinned
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import lt.vitalijus.core.domain.util.Result
 import platform.CoreFoundation.CFDictionaryAddValue
 import platform.CoreFoundation.CFDictionaryCreateMutable
 import platform.CoreFoundation.CFRelease
@@ -45,10 +44,7 @@ class IOSTokenStorage(
     private val service = "lt.vitalijus.deep.tokenstorage"
     private val account = "auth_token"
 
-    private val _tokenFlow = MutableStateFlow<String?>(null)
-    override val tokenFlow: StateFlow<String?> = _tokenFlow
-
-    override suspend fun hasToken(): Boolean {
+    override suspend fun hasToken(): Result<Boolean, StorageError> {
         return try {
             val query = createQueryDictionary()
 
@@ -60,7 +56,7 @@ class IOSTokenStorage(
             val limitVal = CFStringCreateWithCString(kCFAllocatorDefault, kSecMatchLimitOne, null)
             CFDictionaryAddValue(query, limitKey, limitVal)
 
-            memScoped {
+            val exists = memScoped {
                 val result = alloc<CFTypeRefVar>()
                 val status = SecItemCopyMatching(query, result.ptr)
 
@@ -71,15 +67,16 @@ class IOSTokenStorage(
 
                 status == errSecSuccess
             }
+            Result.Success(exists)
         } catch (e: Exception) {
             logger.e(e) { "Failed to check token existence in Keychain" }
-            false
+            Result.Failure(StorageError.IOError(e))
         }
     }
 
-    override suspend fun saveToken(token: String) {
-        try {
-            clearToken()
+    override suspend fun saveToken(token: String): Result<Unit, StorageError> {
+        return try {
+            clearTokenInternal()
 
             val query = createQueryDictionary()
 
@@ -107,20 +104,18 @@ class IOSTokenStorage(
             CFRelease(accVal)
 
             if (status == errSecSuccess) {
-                _tokenFlow.value = token
                 logger.i { "Token saved securely to Keychain" }
+                Result.Success(Unit)
             } else {
-                throw SecureStorageException("Failed to save token to Keychain, status: $status")
+                Result.Failure(StorageError.IOError(Exception("Keychain error: $status")))
             }
-        } catch (e: SecureStorageException) {
-            throw e
         } catch (e: Exception) {
             logger.e(e) { "Failed to save token to Keychain" }
-            throw SecureStorageException("Failed to save token", e)
+            Result.Failure(StorageError.IOError(e))
         }
     }
 
-    override suspend fun getToken(): String? {
+    override suspend fun getToken(): Result<String, StorageError> {
         return try {
             val query = createQueryDictionary()
 
@@ -144,37 +139,42 @@ class IOSTokenStorage(
                 if (status == errSecSuccess) {
                     val dataRef = result.value as? NSData
                     val bytes = dataRef?.bytes?.readBytes(dataRef.length.convert())
-                    bytes?.let { String(it, Charsets.UTF_8) }.also {
-                        _tokenFlow.value = it
-                        logger.d { "Token retrieved from Keychain" }
+                    val token = bytes?.let { String(it, Charsets.UTF_8) }
+
+                    if (token != null) {
+                        Result.Success(token)
+                    } else {
+                        Result.Failure(StorageError.DecryptionFailed(Exception("Failed to decode token")))
                     }
                 } else {
-                    _tokenFlow.value = null
-                    null
+                    Result.Failure(StorageError.NotFound)
                 }
             }
         } catch (e: Exception) {
             logger.e(e) { "Failed to retrieve token from Keychain" }
-            throw SecureStorageException("Failed to retrieve token", e)
+            Result.Failure(StorageError.IOError(e))
         }
     }
 
-    override suspend fun clearToken() {
-        try {
+    override suspend fun clearToken(): Result<Unit, StorageError> {
+        return clearTokenInternal()
+    }
+
+    private fun clearTokenInternal(): Result<Unit, StorageError> {
+        return try {
             val query = createQueryDictionary()
             val status = SecItemDelete(query)
             CFRelease(query)
-
-            _tokenFlow.value = null
 
             if (status == errSecSuccess) {
                 logger.i { "Token cleared from Keychain" }
             } else {
                 logger.d { "No token to clear from Keychain" }
             }
+            Result.Success(Unit)
         } catch (e: Exception) {
             logger.e(e) { "Failed to clear token from Keychain" }
-            throw SecureStorageException("Failed to clear token", e)
+            Result.Failure(StorageError.IOError(e))
         }
     }
 
