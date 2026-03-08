@@ -27,6 +27,7 @@ import platform.CoreFoundation.CFTypeRef
 import platform.CoreFoundation.kCFAllocatorDefault
 import platform.CoreFoundation.kCFTypeDictionaryKeyCallBacks
 import platform.CoreFoundation.kCFTypeDictionaryValueCallBacks
+import platform.Foundation.NSUserDefaults
 import platform.Security.SecItemAdd
 import platform.Security.SecItemCopyMatching
 import platform.Security.SecItemDelete
@@ -54,6 +55,25 @@ class IOSSecureStorage(
 
     private val service = "lt.vitalijus.deep.securestorage"
     private val account = "auth_token"
+    private val firstLaunchKey = "lt.vitalijus.deep.ios.keychain.cleaned"
+    private val defaults = NSUserDefaults.standardUserDefaults()
+    private val legacyService = "lt.vitalijus.deep.tokenstorage"
+    private val legacyAccount = "auth_token"
+
+    init {
+        // iOS Keychain survives app reinstall. On first launch of a fresh install,
+        // clear old auth entries so app doesn't auto-auth with stale token.
+        if (!defaults.boolForKey(firstLaunchKey)) {
+            try {
+                clearTokenInternal(service = service, account = account)
+                clearTokenInternal(service = legacyService, account = legacyAccount)
+                logger.i { "First launch: cleared stale keychain tokens" }
+            } catch (e: Exception) {
+                logger.e(e) { "First launch keychain cleanup failed" }
+            }
+            defaults.setBool(true, forKey = firstLaunchKey)
+        }
+    }
 
     override suspend fun saveToken(token: String) {
         try {
@@ -165,35 +185,38 @@ class IOSSecureStorage(
 
     override suspend fun clearToken() {
         try {
-            memScoped {
-                val query = CFDictionaryCreateMutable(
-                    kCFAllocatorDefault,
-                    3.convert(),
-                    kCFTypeDictionaryKeyCallBacks.ptr,
-                    kCFTypeDictionaryValueCallBacks.ptr
-                )
-
-                CFDictionaryAddValue(query, kSecClass, kSecClassGenericPassword)
-                val serviceStr = cfString(service)
-                val accountStr = cfString(account)
-                CFDictionaryAddValue(query, kSecAttrService, serviceStr)
-                CFDictionaryAddValue(query, kSecAttrAccount, accountStr)
-
-                val status = SecItemDelete(query)
-
-                CFRelease(serviceStr)
-                CFRelease(accountStr)
-                CFRelease(query)
-
-                if (status == errSecSuccess) {
-                    logger.i { "Token cleared from Keychain" }
-                } else {
-                    logger.d { "No token to clear from Keychain" }
-                }
-            }
+            clearTokenInternal(service = service, account = account)
         } catch (e: Exception) {
             logger.e(e) { "Failed to clear token from Keychain" }
             throw SecureStorageException("Failed to clear token", e)
+        }
+    }
+
+    private fun clearTokenInternal(service: String, account: String) {
+        memScoped {
+            val query = CFDictionaryCreateMutable(
+                kCFAllocatorDefault,
+                3.convert(),
+                kCFTypeDictionaryKeyCallBacks.ptr,
+                kCFTypeDictionaryValueCallBacks.ptr
+            )
+            CFDictionaryAddValue(query, kSecClass, kSecClassGenericPassword)
+            val serviceStr = cfString(service)
+            val accountStr = cfString(account)
+            CFDictionaryAddValue(query, kSecAttrService, serviceStr)
+            CFDictionaryAddValue(query, kSecAttrAccount, accountStr)
+
+            val status = SecItemDelete(query)
+
+            CFRelease(serviceStr)
+            CFRelease(accountStr)
+            CFRelease(query)
+
+            if (status == errSecSuccess) {
+                logger.i { "Token cleared from Keychain" }
+            } else {
+                logger.d { "No token to clear from Keychain" }
+            }
         }
     }
 
