@@ -16,9 +16,23 @@ kotlin {
             }
         }
 
+        commonTest {
+            dependencies {
+                implementation(libs.kotlin.test)
+                implementation(libs.kotlinx.coroutines.test)
+            }
+        }
+
         androidMain {
             dependencies {
 
+            }
+        }
+
+        androidInstrumentedTest {
+            dependencies {
+                implementation(libs.androidx.compose.ui.test)
+                implementation(libs.androidx.compose.ui.test.manifest)
             }
         }
 
@@ -27,5 +41,11 @@ kotlin {
 
             }
         }
+    }
+}
+
+android {
+    defaultConfig {
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 }
