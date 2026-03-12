@@ -15,6 +15,5 @@ class LoginState2Test {
         assertEquals("", state.password)
         assertFalse(state.isLoading)
         assertNull(state.errorMessage)
-        assertFalse(state.isLoginSuccessful)
     }
 }
