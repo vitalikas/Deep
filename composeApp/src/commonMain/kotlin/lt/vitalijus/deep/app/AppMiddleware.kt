@@ -10,8 +10,8 @@ import lt.vitalijus.feature.auth.domain.usecases.LogoutUseCase
  * Auth state determined solely by token presence in secure storage.
  */
 class AppMiddleware(
-    private val tokenStorage: TokenStorage,
-    private val logoutUseCase: LogoutUseCase
+    private val tokenStorage: Lazy<TokenStorage>,
+    private val logoutUseCase: Lazy<LogoutUseCase>
 ) : Middleware<AppIntent, AppState, Nothing> {
 
     override suspend fun handle(
@@ -22,7 +22,7 @@ class AppMiddleware(
     ) {
         when (intent) {
             is AppIntent.CheckAuth -> {
-                when (val hasTokenResult = tokenStorage.hasToken()) {
+                when (val hasTokenResult = tokenStorage.value.hasToken()) {
                     is Result.Success -> {
                         dispatchIntent(AppIntent.AuthChecked(isAuthenticated = hasTokenResult.data))
                     }
@@ -35,7 +35,7 @@ class AppMiddleware(
             }
 
             is AppIntent.Logout -> {
-                logoutUseCase()
+                logoutUseCase.value()
             }
 
             else -> {} // AuthChecked handled by reducer only

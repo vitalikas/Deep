@@ -13,8 +13,8 @@ import org.koin.dsl.module
 val appModule = module {
     factory {
         AppMiddleware(
-            tokenStorage = get<TokenStorage>(),
-            logoutUseCase = get<LogoutUseCase>()
+            tokenStorage = lazy { get<TokenStorage>() },
+            logoutUseCase = lazy { get<LogoutUseCase>() }
         )
     }
 

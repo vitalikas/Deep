@@ -3,6 +3,7 @@
 package lt.vitalijus.core.presentation.mvi
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,7 +66,7 @@ abstract class BaseStore<I : UiIntent, S : UiState, E : UiEffect>(
         val newState = reducer.reduce(_state.value, intent)
         _state.value = newState
 
-        scope.launch {
+        scope.launch(Dispatchers.Default) {
             middleware.handle(
                 intent = intent,
                 state = newState,

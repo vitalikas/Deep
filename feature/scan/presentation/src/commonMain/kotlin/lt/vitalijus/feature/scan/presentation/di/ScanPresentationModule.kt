@@ -14,8 +14,8 @@ val scanPresentationModule = module {
     // Scan List
     factory<ScanListMiddleware> {
         ScanListMiddleware(
-            getScansUseCase = get<GetScansUseCase>(),
-            clearAllCacheUseCase = get<ClearAllCacheUseCase>()
+            getScansUseCase = lazy { get<GetScansUseCase>() },
+            clearAllCacheUseCase = lazy { get<ClearAllCacheUseCase>() }
         )
     }
 
@@ -26,7 +26,11 @@ val scanPresentationModule = module {
     }
 
     // Scan Detail - Single shared ViewModel instance
-    factory<ScanDetailMiddleware> { ScanDetailMiddleware(getBathymetryUseCase = get<GetBathymetryUseCase>()) }
+    factory<ScanDetailMiddleware> { 
+        ScanDetailMiddleware(
+            getBathymetryUseCase = lazy { get<GetBathymetryUseCase>() }
+        ) 
+    }
 
     // Single ViewModel shared between list and detail screens
     viewModel {

@@ -60,7 +60,8 @@ class IOSSecureStorage(
     private val legacyService = "lt.vitalijus.deep.tokenstorage"
     private val legacyAccount = "auth_token"
 
-    init {
+    /** Lazy first-launch cleanup - runs once before first Keychain access */
+    private val firstLaunchCleanupDone: Boolean by lazy {
         // iOS Keychain survives app reinstall. On first launch of a fresh install,
         // clear old auth entries so app doesn't auto-auth with stale token.
         if (!defaults.boolForKey(firstLaunchKey)) {
@@ -73,9 +74,13 @@ class IOSSecureStorage(
             }
             defaults.setBool(true, forKey = firstLaunchKey)
         }
+        true
     }
 
+    private fun ensureCleanup() { firstLaunchCleanupDone }
+
     override suspend fun saveToken(token: String) {
+        ensureCleanup()
         try {
             // Delete any existing token first
             clearToken()
@@ -136,6 +141,7 @@ class IOSSecureStorage(
     }
 
     override suspend fun getToken(): String? {
+        ensureCleanup()
         return try {
             memScoped {
                 val query = CFDictionaryCreateMutable(
@@ -184,6 +190,7 @@ class IOSSecureStorage(
     }
 
     override suspend fun clearToken() {
+        ensureCleanup()
         try {
             clearTokenInternal(service = service, account = account)
         } catch (e: Exception) {
@@ -221,6 +228,7 @@ class IOSSecureStorage(
     }
 
     override suspend fun hasToken(): Boolean {
+        ensureCleanup()
         return try {
             memScoped {
                 val query = CFDictionaryCreateMutable(
