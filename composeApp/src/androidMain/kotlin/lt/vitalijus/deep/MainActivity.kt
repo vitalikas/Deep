@@ -7,7 +7,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import io.kotzilla.generated.monitoring
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import lt.vitalijus.core.data.di.coreDataModule
+import lt.vitalijus.core.database.AppDatabase
 import lt.vitalijus.core.database.di.coreDatabaseModule
 import lt.vitalijus.core.security.di.securityModule
 import lt.vitalijus.deep.di.appModule
@@ -19,6 +24,7 @@ import lt.vitalijus.feature.scan.domain.di.scanDomainModule
 import lt.vitalijus.feature.scan.presentation.di.scanPresentationModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import org.koin.java.KoinJavaComponent.getKoin
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,6 +55,16 @@ class DeepApplication : Application() {
                 authDataModule,
                 authPresentationModule
             )
+            monitoring()
+        }
+
+        // Pre-warm heavy singletons on background thread
+        preWarmDbInitialisation()
+    }
+
+    private fun preWarmDbInitialisation() {
+        MainScope().launch(Dispatchers.IO) {
+            getKoin().get<AppDatabase>()
         }
     }
 }

@@ -12,7 +12,7 @@ import lt.vitalijus.feature.scan.domain.usecase.GetBathymetryUseCase
  * Middleware for handling scan detail side effects.
  */
 class ScanDetailMiddleware(
-    private val getBathymetryUseCase: GetBathymetryUseCase
+    private val getBathymetryUseCase: Lazy<GetBathymetryUseCase>
 ) : Middleware<ScanDetailIntent, ScanDetailState, ScanDetailEffect> {
 
     override suspend fun handle(
@@ -43,7 +43,7 @@ class ScanDetailMiddleware(
         dispatchIntent: suspend (ScanDetailIntent) -> Unit,
         emitEffect: suspend (ScanDetailEffect) -> Unit
     ) {
-        val result: Result<BathymetryData, DataError> = getBathymetryUseCase(scanId)
+        val result: Result<BathymetryData, DataError> = getBathymetryUseCase.value(scanId)
         result
             .onSuccess { bathymetryData ->
                 dispatchIntent(

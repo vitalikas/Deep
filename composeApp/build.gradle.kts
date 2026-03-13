@@ -3,6 +3,7 @@ import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 plugins {
     alias(libs.plugins.convention.cmp.application)
     alias(libs.plugins.convention.buildkonfig)
+    alias(libs.plugins.convention.kotzilla)
 }
 
 android {

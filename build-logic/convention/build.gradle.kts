@@ -17,6 +17,8 @@ dependencies {
     // Room
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.androidx.room.gradle.plugin)
+    // Kotzilla
+    implementation(libs.kotzilla.gradlePlugin)
 }
 
 java {
@@ -70,6 +72,10 @@ gradlePlugin {
         register("room") {
             id = "lt.vitalijus.convention.room"
             implementationClass = "RoomConventionPlugin"
+        }
+        register("kotzilla") {
+            id = "lt.vitalijus.convention.kotzilla"
+            implementationClass = "KotzillaConventionPlugin"
         }
     }
 }

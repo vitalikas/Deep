@@ -10,8 +10,8 @@ import lt.vitalijus.feature.scan.domain.usecase.GetScansUseCase
  * Middleware for handling scan list side effects.
  */
 class ScanListMiddleware(
-    private val getScansUseCase: GetScansUseCase,
-    private val clearAllCacheUseCase: ClearAllCacheUseCase
+    private val getScansUseCase: Lazy<GetScansUseCase>,
+    private val clearAllCacheUseCase: Lazy<ClearAllCacheUseCase>
 ) : Middleware<ScanListIntent, ScanListState, ScanListEffect> {
 
     override suspend fun handle(
@@ -34,7 +34,7 @@ class ScanListMiddleware(
 
             is ScanListIntent.OnLogoutClick -> {
                 // Clear cache for security, then emit effect for UI layer to handle auth logout
-                clearAllCacheUseCase()
+                clearAllCacheUseCase.value()
                 emitEffect(ScanListEffect.LogoutRequested)
             }
 
@@ -46,7 +46,7 @@ class ScanListMiddleware(
         dispatchIntent: suspend (ScanListIntent) -> Unit,
         emitEffect: suspend (ScanListEffect) -> Unit
     ) {
-        getScansUseCase()
+        getScansUseCase.value()
             .onSuccess { scans ->
                 dispatchIntent(ScanListIntent.OnScansLoaded(scans = scans.toUiModels()))
             }

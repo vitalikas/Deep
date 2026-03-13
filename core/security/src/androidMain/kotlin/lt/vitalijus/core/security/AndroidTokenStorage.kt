@@ -26,13 +26,13 @@ import javax.crypto.spec.GCMParameterSpec
  * - AES/GCM/NoPadding for encryption
  */
 class AndroidTokenStorage(
-    context: Context,
+    private val context: Context,
     private val logger: Logger
 ) : TokenStorage {
 
-    private val dataStore: DataStore<Preferences> = context.dataStore
-    private val dataStoreTokenKey = stringPreferencesKey(KEY_TOKEN)
-    private val cipher: Cipher = Cipher.getInstance(TRANSFORMATION)
+    private val dataStore: DataStore<Preferences> by lazy { context.dataStore }
+    private val dataStoreTokenKey by lazy { stringPreferencesKey(KEY_TOKEN) }
+    private val cipher: Cipher by lazy { Cipher.getInstance(TRANSFORMATION) }
 
     companion object {
         private const val STORAGE_NAME = "secure_storage"
@@ -48,8 +48,10 @@ class AndroidTokenStorage(
         )
     }
 
-    init {
+    /** Called lazily before first encrypt/decrypt operation */
+    private val keyReady: Boolean by lazy {
         generateKeyIfNecessary()
+        true
     }
 
     private fun generateKeyIfNecessary() {
@@ -96,7 +98,10 @@ class AndroidTokenStorage(
         }
     }
 
+    private fun ensureKeyReady() { keyReady }
+
     private fun encrypt(plaintext: String): Result<String, StorageError> {
+        ensureKeyReady()
         return when (val keyResult = getSecretKey()) {
             is Result.Success -> {
                 try {
@@ -120,6 +125,7 @@ class AndroidTokenStorage(
     }
 
     private fun decrypt(ciphertext: String): Result<String, StorageError> {
+        ensureKeyReady()
         return when (val keyResult = getSecretKey()) {
             is Result.Success -> {
                 try {
