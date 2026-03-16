@@ -1,6 +1,7 @@
 package lt.vitalijus.deep
 
 import androidx.compose.ui.window.ComposeUIViewController
+import io.kotzilla.generated.monitoring
 import lt.vitalijus.core.data.di.coreDataModule
 import lt.vitalijus.core.database.di.coreDatabaseModule
 import lt.vitalijus.core.security.di.securityModule
@@ -14,24 +15,22 @@ import lt.vitalijus.feature.scan.presentation.di.scanPresentationModule
 import org.koin.core.context.startKoin
 
 fun MainViewController() = ComposeUIViewController {
-    // Initialize Koin
-    try {
-        startKoin {
-            modules(
-                coreDatabaseModule,
-                coreDataModule,
-                securityModule,
-                authDataModule,
-                authDomainModule,
-                appModule,
-                scanDomainModule,
-                scanDataModule,
-                scanPresentationModule,
-                authPresentationModule
-            )
-        }
-    } catch (e: IllegalStateException) {
-        // Koin already started, ignore
+
+    startKoin {
+        monitoring()
+        modules(
+            coreDatabaseModule,
+            coreDataModule,
+            securityModule,
+            authDataModule,
+            authDomainModule,
+            appModule,
+            scanDomainModule,
+            scanDataModule,
+            scanPresentationModule,
+            authPresentationModule
+        )
     }
+
     App()
 }
