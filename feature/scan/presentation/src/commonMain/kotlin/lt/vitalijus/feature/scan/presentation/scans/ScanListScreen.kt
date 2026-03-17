@@ -73,6 +73,7 @@ fun ScanListScreenRoot(
     viewModel: ScanListViewModel = koinViewModel(),
     scanDetailViewModel: ScanDetailViewModel = koinViewModel(),
     onScanClick: (Long) -> Unit = {},
+    onSelectedScanChange: (Long?, String) -> Unit = { _, _ -> },
     onLogout: () -> Unit = {}
 ) {
     val scanListState by viewModel.state.collectAsStateWithLifecycle()
@@ -102,8 +103,17 @@ fun ScanListScreenRoot(
 
     LaunchedEffect(selectedScanId) {
         if (scanListState.selectedScanId == null && selectedScanId != null) {
-            viewModel.dispatch(ScanListIntent.OnSelectScan(selectedScanId))
+            viewModel.dispatch(intent = ScanListIntent.OnSelectScan(selectedScanId))
         }
+    }
+
+    // Keep host-level navigation state in sync with two-pane selection changes
+    LaunchedEffect(scanListState.selectedScanId, scanListState.scans) {
+        val currentSelectedId = scanListState.selectedScanId
+        val selectedName = currentSelectedId
+            ?.let { selectedId -> scanListState.scans.find { it.id == selectedId }?.name }
+            .orEmpty()
+        onSelectedScanChange(currentSelectedId, selectedName)
     }
 
     ScanListScreen(
