@@ -8,6 +8,7 @@ import lt.vitalijus.core.presentation.mvi.MviViewModel
 class ScanListViewModel(
     middleware: ScanListMiddleware
 ) : MviViewModel<ScanListIntent, ScanListState, ScanListEffect>(
+    initialIntent = ScanListIntent.LoadScans,
     initialState = ScanListState(),
     reducer = createScanListReducer(),
     middleware = middleware
