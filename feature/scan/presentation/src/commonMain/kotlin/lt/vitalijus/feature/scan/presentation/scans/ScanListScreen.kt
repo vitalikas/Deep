@@ -79,24 +79,12 @@ fun ScanListScreenRoot(
     val scanListState by viewModel.state.collectAsStateWithLifecycle()
     val scanDetailState by scanDetailViewModel.state.collectAsStateWithLifecycle()
 
-    // Load scans on first composition
-    LaunchedEffect(Unit) {
-        if (scanListState.scans.isEmpty() && !scanListState.isLoading) {
-            viewModel.dispatch(ScanListIntent.LoadScans)
-        }
-    }
-
-    // Handle navigation effects
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is ScanListEffect.NavigateToScanDetail -> onScanClick(effect.scanId)
-                is ScanListEffect.ShowToast -> { /* Show toast */
-                }
-
-                is ScanListEffect.LogoutRequested -> {
-                    onLogout()
-                }
+                is ScanListEffect.ShowToast -> Unit
+                is ScanListEffect.LogoutRequested -> onLogout()
             }
         }
     }
