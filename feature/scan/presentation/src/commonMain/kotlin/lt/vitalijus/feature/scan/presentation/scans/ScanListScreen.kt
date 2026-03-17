@@ -179,7 +179,7 @@ internal fun ScanListScreen(
                 OnePaneContent(
                     scans = scanListState.scans,
                     isLoading = scanListState.isLoading,
-                    selectedScanId = selectedScanId,
+                    selectedScanId = null,
                     onScanClick = { scanId ->
                         onScanListIntent(ScanListIntent.OnScanClick(scanId = scanId))
                     },
